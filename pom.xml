@@ -46,11 +46,6 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc11</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
@@ -60,7 +55,44 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<<<<<<< HEAD
+	
+			<!-- Dependência do Spring Boot Starter para MongoDB -->
+=======
+
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+>>>>>>> 275c4dacf315336d6689ef8fe7d3ad26be06422a
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+<<<<<<< HEAD
+		
+		<!-- Dependência do Spring Boot Starter para Web, se você estiver criando uma API REST -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<!-- Dependência do Spring Boot Starter para Testes -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+=======
+
+
+>>>>>>> 275c4dacf315336d6689ef8fe7d3ad26be06422a
 	</dependencies>
+
+
 
 	<build>
 		<plugins>
