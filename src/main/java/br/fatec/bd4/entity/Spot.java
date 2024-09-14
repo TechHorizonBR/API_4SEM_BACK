@@ -17,27 +17,33 @@ public class Spot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long _id;
 
-    @Column(name = "createdAt", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "CreatedAt", nullable = false)
+    private LocalDateTime CreatedAt = LocalDateTime.now();
 
-    @Column(name = "latitude", nullable = false, precision = 10)
+    @Column(name = "lat", nullable = false, precision = 10)
     private Double lat;
 
-    @Column(name = "longitude", nullable = false, precision = 12, scale = 10)
+    @Column(name = "long", nullable = false, precision = 12, scale = 10)
     private Double lng;
 
     @Column(name = "fullName", nullable = false)
     private String fullName;
 
-    @Column(name = "device", nullable = false)
-    private String device;
+    @Column(name = "code", nullable = false)
+    private String code ;
 
-    @Column(name = "localName", nullable = false)
-    private String localName;
+    @Column(name = "location")
+    private String location;
 
     @Column(name = "macAdress", nullable = false)
     private String macAdress;
+
+    @Column(name = "codeDevice", nullable = false)
+    private String codeDevice;
+
+    @Column(name = "idDevice", nullable = false)
+    private String idDevice;
 
 }
