@@ -1,5 +1,6 @@
-package br.fatec.bd4.entity;
+package br.fatec.bd4.document;
 
+import jakarta.persistence.Column;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class Spot {
     private LocalDateTime CreatedAt = LocalDateTime.now();
 
     private Double lat;
-
+    @Column(name = "long")
     private Double lng;
 
     private String fullName;

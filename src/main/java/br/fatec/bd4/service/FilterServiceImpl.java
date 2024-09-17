@@ -23,7 +23,7 @@ public class FilterServiceImpl implements FilterService {
             case DATE:
                 return new FilterType(new DateFilter()).getValues();
             case DEVICE:
-                return new FilterType(new DeviceFilter()).getValues();
+                return new FilterType(new DeviceFilter(spotRepository)).getValues();
             case NAME:
                 return new FilterType(new NameFilter(spotRepository)).getValues();
             default:
