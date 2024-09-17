@@ -16,7 +16,7 @@ import java.util.Set;
 public class FilterController {
     private final FilterServiceImpl filterService;
 
-    @GetMapping("/type")
+    @PostMapping("/type")
     public ResponseEntity<Set<String>> getByTypeFilter(@RequestBody FilterView filter){
         return ResponseEntity.ok().body(filterService.getValuesByFilterType(filter.getFilter()));
     }
