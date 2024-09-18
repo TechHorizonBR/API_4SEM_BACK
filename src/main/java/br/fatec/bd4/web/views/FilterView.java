@@ -6,13 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Filter {
-    private FiltersType tipo;
-    private List<String> values;
+@Getter
+@Setter
+public class FilterView {
+    private FiltersType filter;
 }
