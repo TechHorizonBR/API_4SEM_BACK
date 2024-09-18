@@ -20,20 +20,6 @@ public class DeviceFilter implements Filter{
     // This part of code needs to include the connection with nosql database to pull the available devices.
     @Override
     public Set<String> getValues() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.values = spotRepository.findAllCodeDevice()
-                .stream()
-                .map(jsonString-> {
-                    try {
-                        Map<String, String> map = objectMapper.readValue(jsonString, Map.class);
-                        return map.get("codeDevice");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                })
-                .filter(codeDevice -> codeDevice != null)
-                .collect(Collectors.toSet());
         return values;
     }
 

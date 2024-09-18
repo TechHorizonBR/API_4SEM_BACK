@@ -4,6 +4,7 @@ import br.fatec.bd4.Filters.DateFilter;
 import br.fatec.bd4.Filters.DeviceFilter;
 import br.fatec.bd4.Filters.NameFilter;
 import br.fatec.bd4.Filters.FilterType;
+import br.fatec.bd4.entity.Spot;
 import br.fatec.bd4.enums.FiltersType;
 import br.fatec.bd4.repository.SpotRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,10 @@ import java.util.Set;
 @AllArgsConstructor
 public class FilterServiceImpl implements FilterService {
     private final SpotRepository spotRepository;
+
+    public Spot create(Spot spot){
+        return spotRepository.save(spot);
+    }
     @Override
     public Set<String> getValuesByFilterType(FiltersType filter) {
 
