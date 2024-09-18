@@ -1,5 +1,6 @@
 package br.fatec.bd4.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,12 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonView(View.ViewFilterUserDevice.class)
     @Column(name = "nome", length = 200)
     private String nome;
+
+    @JsonView(View.ViewFilterUserDevice.class)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario")
+    private Device device;
+
 }
