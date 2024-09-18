@@ -56,9 +56,12 @@
 			<scope>test</scope>
 		</dependency>
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 			<!-- Dependência do Spring Boot Starter para MongoDB -->
 =======
+=======
+>>>>>>> 275c4dacf315336d6689ef8fe7d3ad26be06422a
 
 		<dependency>
 			<groupId>com.mysql</groupId>
@@ -66,11 +69,15 @@
 			<scope>runtime</scope>
 		</dependency>
 
+<<<<<<< HEAD
+>>>>>>> 275c4dacf315336d6689ef8fe7d3ad26be06422a
+=======
 >>>>>>> 275c4dacf315336d6689ef8fe7d3ad26be06422a
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
+<<<<<<< HEAD
 <<<<<<< HEAD
 		
 		<!-- Dependência do Spring Boot Starter para Web, se você estiver criando uma API REST -->
@@ -86,6 +93,10 @@
 			<scope>test</scope>
 		</dependency>
 		
+=======
+
+
+>>>>>>> 275c4dacf315336d6689ef8fe7d3ad26be06422a
 =======
 
 
