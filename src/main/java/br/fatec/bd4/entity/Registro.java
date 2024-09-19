@@ -18,7 +18,7 @@ public class Registro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "dataHora")
-    private LocalDateTime dataHora = LocalDateTime.now();
+    private LocalDateTime dataHora;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "device_id") // DEVICE
