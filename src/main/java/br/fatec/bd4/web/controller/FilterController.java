@@ -27,7 +27,7 @@ import java.util.List;
 @Tag(name = "Filters", description = "Endpoints responsible for getting values from database")
 public class FilterController {
     private final FilterServiceImpl filterService;
-    @GetMapping("/user/device")
+    @GetMapping("/userDevice")
     @JsonView(View.ViewFilterUserDevice.class)
     @Operation(
             summary = "Get Users and Devices",
