@@ -15,7 +15,7 @@ public class SwaggerConfig {
     public OpenAPI springShopOpenAPI(){
         return new OpenAPI()
                 .info(new Info().title("LocalTracker API")
-                        .description("Aplicação Back-end responsável por restaurar e gravar dados no banco de dados.")
+                        .description("Back-end application responsible for getting and posting data from database.")
                         .version("v1.0.0")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }
