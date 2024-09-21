@@ -22,7 +22,7 @@ public class Usuario {
     private String nome;
 
     @JsonView(View.ViewFilterUserDevice.class)
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario")
+    @OneToOne(mappedBy = "usuario")
     private Device device;
 
 }

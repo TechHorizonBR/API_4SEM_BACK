@@ -26,7 +26,7 @@ public class Device {
     @Column(name = "mac_address")
     private String macAddress;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
