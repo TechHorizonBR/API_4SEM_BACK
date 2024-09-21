@@ -1,33 +1,39 @@
 package br.fatec.bd4.service;
 
-import br.fatec.bd4.Filters.DateFilter;
-import br.fatec.bd4.Filters.DeviceFilter;
-import br.fatec.bd4.Filters.NameFilter;
-import br.fatec.bd4.Filters.FilterType;
-import br.fatec.bd4.enums.FiltersType;
-import br.fatec.bd4.repository.SpotRepository;
+import br.fatec.bd4.entity.Usuario;
+import br.fatec.bd4.repository.UsuarioRepository;
+import br.fatec.bd4.service.interfaces.FilterService;
+import br.fatec.bd4.web.dto.DadosUsuarioDTO;
+import br.fatec.bd4.web.dto.RequestUsuarios;
+import br.fatec.bd4.web.dto.UsuariosResponseDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
+import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
-public class FilterServiceImpl implements FilterService {
-    private final SpotRepository spotRepository;
-    @Override
-    public Set<String> getValuesByFilterType(FiltersType filter) {
+public class FilterServiceImpl implements FilterService{
+    private final UsuarioRepository usuarioRepository;
 
-        switch (filter){
-            case DATE:
-                return new FilterType(new DateFilter()).getValues();
-            case DEVICE:
-                return new FilterType(new DeviceFilter(spotRepository)).getValues();
-            case NAME:
-                return new FilterType(new NameFilter(spotRepository)).getValues();
-            default:
-                throw new RuntimeException("Wrong filter");
-        }
+    @Transactional(readOnly = true)
+    @Override
+    public UsuariosResponseDTO getUsersDevice(RequestUsuarios requestUsuarios) throws NoSuchElementException {
+        PageRequest page = PageRequest.of(requestUsuarios.page(), 10);
+
+        Page<Usuario> usuariosPage = usuarioRepository.findAllUsuarios(page);
+
+        Page<DadosUsuarioDTO> dadosUsuariosPage = usuariosPage.map(DadosUsuarioDTO::new);
+
+        int pageActual = dadosUsuariosPage.getNumber();
+        int totalPages = dadosUsuariosPage.getTotalPages();
+
+        List<DadosUsuarioDTO> usersResponse = dadosUsuariosPage.getContent();
+
+        return new UsuariosResponseDTO(usersResponse, pageActual, totalPages);
     }
 }
