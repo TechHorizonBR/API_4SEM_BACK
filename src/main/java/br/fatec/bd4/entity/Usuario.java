@@ -25,4 +25,8 @@ public class Usuario {
     @OneToOne(mappedBy = "usuario")
     private Device device;
 
+    public Usuario(String nome){
+        this.nome = nome;
+    }
+
 }

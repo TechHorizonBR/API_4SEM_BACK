@@ -2,6 +2,8 @@ package br.fatec.bd4.web.controller;
 
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.service.UsuarioService;
+import br.fatec.bd4.web.dto.UserInputDTO;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +53,10 @@ public class UsuarioController {
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         usuarioService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/input-users")
+    public ResponseEntity<Void> inputUsers(@RequestBody List<UserInputDTO> users){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
