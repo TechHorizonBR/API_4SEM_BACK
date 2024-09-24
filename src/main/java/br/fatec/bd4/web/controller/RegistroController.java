@@ -2,6 +2,8 @@ package br.fatec.bd4.web.controller;
 
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.RegistroService;
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

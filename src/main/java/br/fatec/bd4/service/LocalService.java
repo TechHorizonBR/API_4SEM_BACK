@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class LocalService {
@@ -37,5 +38,9 @@ public class LocalService {
         local.setLongitude(localDetails.getLongitude());
         local.setAltitude(localDetails.getAltitude());
         return localRepository.save(local);
+    }
+
+    public List<LocalDTO> findLocalByFilters(LocalDateTime startDate, LocalDateTime endDate , String nomeDevice, String nomeUsuario) {
+        return localRepository.findLocalByFilters(startDate, endDate, nomeDevice, nomeUsuario);
     }
 }

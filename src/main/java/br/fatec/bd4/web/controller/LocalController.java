@@ -2,6 +2,9 @@ package br.fatec.bd4.web.controller;
 
 import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.service.LocalService;
+import br.fatec.bd4.web.dto.LocalDTO;
+import br.fatec.bd4.web.dto.LocalFilterDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +54,19 @@ public class LocalController {
     public ResponseEntity<Void> deleteLocal(@PathVariable Long id) {
         localService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/filtros")
+    @Operation(
+        summary = "Filtra locais com base em critérios específicos",
+        description = "Endpoint responsável por filtrar locais com base em data e outros parâmetros",
+        responses = {
+            @ApiResponse(responseCode = "200",
+                         description = "Obtenção dos locais filtrados com sucesso.",
+                         content = @Content(mediaType = "application/json", schema = @Schema(implementation = LocalDTO.class)))
+        }
+    )
+    public ResponseEntity<List<LocalDTO>> findLocalByFilters(@RequestBody LocalFilterDTO filtros) {
+        return ResponseEntity.ok(localService.findLocalByFilters(filtros.getDataStart(), filtros.getEndDate(), filtros.getNomeDevice(), filtros.getNomeUsuario()));
     }
 }
