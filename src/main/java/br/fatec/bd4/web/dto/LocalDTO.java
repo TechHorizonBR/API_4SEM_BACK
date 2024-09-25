@@ -1,11 +1,10 @@
 package br.fatec.bd4.web.dto;
 
-import br.fatec.bd4.entity.Local;
+import java.time.LocalDateTime;
 
-public record LocalDTO(Double longitude, Double altitude) {
-    public LocalDTO(Local local) {
-        this(local.getLongitude(), local.getAltitude());
-    }
 
-    
+public record LocalDTO(
+    LocalDateTime date, 
+    String nomeDevice, 
+    String nomeUsuario) {
 }

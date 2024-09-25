@@ -1,8 +1,12 @@
 package br.fatec.bd4.web.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import br.fatec.bd4.entity.FilterLocal;
 import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.service.LocalService;
+import br.fatec.bd4.web.dto.LocalDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,9 +59,15 @@ public class LocalController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/filtros")
-    public ResponseEntity<List<Local>> findLocalByFilters(@RequestBody FilterLocal filtros) {
-        List<Local> locals = localService.findLocalByFilters(filtros);
+    @GetMapping("/filtros")
+    public ResponseEntity<List<LocalDTO>> findLocalByFilters(
+        @RequestParam(defaultValue = "") LocalDateTime startDate,
+        @RequestParam(defaultValue = "") LocalDateTime endDate,
+        @RequestParam(defaultValue = "") String nomeDevice,
+        @RequestParam(defaultValue = "") String nomeUsuario
+    ) {
+
+        List<LocalDTO> locals = localService.findLocalByFilters(startDate, endDate, nomeDevice, nomeUsuario);
         return ResponseEntity.ok(locals);
     }
 }
