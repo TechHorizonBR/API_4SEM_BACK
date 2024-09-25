@@ -1,9 +1,8 @@
 package br.fatec.bd4.web.controller;
 
+import br.fatec.bd4.entity.FilterLocal;
 import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.service.LocalService;
-import br.fatec.bd4.web.dto.LocalDTO;
-import br.fatec.bd4.web.dto.LocalFilterDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,16 +56,8 @@ public class LocalController {
     }
 
     @PostMapping("/filtros")
-    @Operation(
-        summary = "Filtra locais com base em critérios específicos",
-        description = "Endpoint responsável por filtrar locais com base em data e outros parâmetros",
-        responses = {
-            @ApiResponse(responseCode = "200",
-                         description = "Obtenção dos locais filtrados com sucesso.",
-                         content = @Content(mediaType = "application/json", schema = @Schema(implementation = LocalDTO.class)))
-        }
-    )
-    public ResponseEntity<List<LocalDTO>> findLocalByFilters(@RequestBody LocalFilterDTO filtros) {
-        return ResponseEntity.ok(localService.findLocalByFilters(filtros.getDataStart(), filtros.getEndDate(), filtros.getNomeDevice(), filtros.getNomeUsuario()));
+    public ResponseEntity<List<Local>> findLocalByFilters(@RequestBody FilterLocal filtros) {
+        List<Local> locals = localService.findLocalByFilters(filtros);
+        return ResponseEntity.ok(locals);
     }
 }

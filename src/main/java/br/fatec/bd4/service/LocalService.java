@@ -1,5 +1,6 @@
 package br.fatec.bd4.service;
 
+import br.fatec.bd4.entity.FilterLocal;
 import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.repository.LocalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +37,15 @@ public class LocalService {
                 .orElseThrow(() -> new RuntimeException("Local not found with id " + id));
         local.setNome(localDetails.getNome());
         local.setLongitude(localDetails.getLongitude());
-        local.setAltitude(localDetails.getAltitude());
+        local.setLatitude(localDetails.getLatitude());
         return localRepository.save(local);
     }
 
-    public List<LocalDTO> findLocalByFilters(LocalDateTime startDate, LocalDateTime endDate , String nomeDevice, String nomeUsuario) {
+    public List<Local> findLocalByFilters(FilterLocal filtros) {
+        LocalDateTime startDate = filtros.getStartDate();
+        LocalDateTime endDate = filtros.getEndDate();
+        String nomeDevice = filtros.getNomeDevice();
+        String nomeUsuario = filtros.getNomeUsuario();
         return localRepository.findLocalByFilters(startDate, endDate, nomeDevice, nomeUsuario);
     }
 }

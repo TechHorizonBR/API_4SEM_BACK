@@ -19,8 +19,8 @@ public class Local {
     private String nome;
     @Column(name = "longitude")
     private Double longitude;
-    @Column(name = "altitude")
-    private Double altitude;
+    @Column(name = "latitude")
+    private Double latitude;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "local")
     private List<Registro> registros;
