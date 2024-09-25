@@ -57,6 +57,7 @@ public class UsuarioController {
 
     @PostMapping("/input-users")
     public ResponseEntity<Void> inputUsers(@RequestBody List<UserInputDTO> users){
+        usuarioService.inputUsers(users);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

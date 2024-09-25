@@ -31,13 +31,13 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public Usuario findByName(String nome){
+    public Usuario findByNameAndCreate(String nome){
         Optional<Usuario> usuario = usuarioRepository.findByNome(nome);
 
         if (usuario.isPresent()){
             return usuario.get();
         }else{
-            throw new EntityNotFoundException(String.format("Usuario com o nome %s não encontrado", nome));
+            return usuarioRepository.save(new Usuario(nome));
         }
     }
     public Usuario save(Usuario usuario) {

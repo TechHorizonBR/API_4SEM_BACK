@@ -18,7 +18,7 @@ public class FilterServiceImpl implements FilterService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<UserDeviceDataDTO> getUsersDevice(){
+    public List<UserDeviceDataDTO> getUsersDevice() {
         List<Usuario> users = usuarioRepository.findAllUsuarios();
 
         List<UserDeviceDataDTO> usersData = users.stream()

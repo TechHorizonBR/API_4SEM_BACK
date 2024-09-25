@@ -2,6 +2,7 @@ package br.fatec.bd4.service;
 
 import br.fatec.bd4.entity.Device;
 import br.fatec.bd4.repository.DeviceRepository;
+import br.fatec.bd4.web.dto.RegisterInputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,4 +39,5 @@ public class DeviceService {
         device.setUsuario(deviceDetails.getUsuario());
         return deviceRepository.save(device);
     }
+
 }

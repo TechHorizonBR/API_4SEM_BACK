@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,13 +19,14 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonView(View.ViewFilterUserDevice.class)
     @Column(name = "nome", length = 200)
     private String nome;
 
-    @JsonView(View.ViewFilterUserDevice.class)
-    @OneToOne(mappedBy = "usuario")
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Device device;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")
+    private List<Registro> registros;
 
     public Usuario(String nome){
         this.nome = nome;

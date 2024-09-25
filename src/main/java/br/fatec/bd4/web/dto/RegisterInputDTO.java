@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 public record RegisterInputDTO(
         @JsonAlias("createdAt") LocalDateTime createdAt,
         @JsonAlias("Latitude") Double latitude,
-        @JsonAlias("Altitude") Double altitude,
-        @JsonAlias("FullName") String fullName
+        @JsonAlias("Longitude") Double longitude,
+        @JsonAlias("FullName") String fullName,
+        @JsonAlias("LocalName") String localName
         ) {
 }

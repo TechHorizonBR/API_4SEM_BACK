@@ -30,9 +30,6 @@ public class Device {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "device")
-    private List<Registro> registros;
-
     public Device(String codigo, String macAddress, Usuario usuario){
         this.codigo = codigo;
         this.macAddress = macAddress;
