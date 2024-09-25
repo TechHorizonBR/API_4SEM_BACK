@@ -61,8 +61,8 @@ public class UsuarioService {
             Optional<Usuario> usuarioFound = usuarioRepository.findByNome(user.fullName());
 
             if(usuarioFound.isEmpty()){
-                usuarioRepository.save(new Usuario(user.fullName()));
-                deviceService.save(new Device())
+                Usuario userCadastrado = usuarioRepository.save(new Usuario(user.fullName()));
+                deviceService.save(new Device(user.codigoDevice(), user.macAddress(),userCadastrado));
             }
         }
     }
