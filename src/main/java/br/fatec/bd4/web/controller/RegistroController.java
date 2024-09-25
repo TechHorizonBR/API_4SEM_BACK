@@ -3,6 +3,10 @@ package br.fatec.bd4.web.controller;
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.RegistroService;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +47,20 @@ public class RegistroController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Endpoint responsible for putting new registers into application.",
+            description = "Endpoint responsible for putting new user into application, receiving a list of RegisterInputDTO to input the data.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Registers have been created.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))
+                    )
+            }
+    )
     @PostMapping("/input-registers")
     public ResponseEntity<Void> inputRegisters(@RequestBody List<RegisterInputDTO> registers){
         registroService.inputRegisters(registers);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

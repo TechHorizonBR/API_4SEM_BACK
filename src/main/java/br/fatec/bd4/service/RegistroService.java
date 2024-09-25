@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +22,6 @@ public class RegistroService {
     private RegistroRepository registroRepository;
     @Autowired
     private LocalService localService;
-    @Autowired
-    private DeviceService deviceService;
     @Autowired
     private UsuarioService usuarioService;
 
@@ -45,10 +45,14 @@ public class RegistroService {
     @Transactional
     public void inputRegisters(List<RegisterInputDTO> registers) {
         for(RegisterInputDTO register : registers){
-            if(!register.fullName().equals("") && register.latitude() != null && register.longitude() != null && register.createdAt() != null){
+            if(!register.fullName().equals("") && register.latitude() != null && register.longitude() != null && !register.createdAt().equals("")){
+                String name = register.fullName().trim();
+                String date = register.createdAt().trim();
+                date = date.replace(" ", "");
+                LocalDateTime newDate = LocalDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
                 Local local = localService.findByLatitudeAndLongitude(new Local(register.localName(), register.latitude(), register.longitude()));
-                Usuario usuario = usuarioService.findByNameAndCreate(register.fullName());
-                registroRepository.save(new Registro(register.createdAt(), usuario, local));
+                Usuario usuario = usuarioService.findByNameAndCreate(name);
+                registroRepository.save(new Registro(newDate, usuario, local));
             }
         }
     }
