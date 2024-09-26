@@ -5,6 +5,6 @@ import java.time.LocalDateTime;
 
 public record LocalDTO(
     LocalDateTime date, 
-    String nomeDevice, 
-    String nomeUsuario) {
+    Double latitude, 
+    Double longitude) {
 }

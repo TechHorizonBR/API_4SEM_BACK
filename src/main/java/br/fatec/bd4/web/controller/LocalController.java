@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import br.fatec.bd4.entity.FilterLocal;
 import br.fatec.bd4.entity.Local;
+import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.LocalService;
 import br.fatec.bd4.web.dto.LocalDTO;
 
@@ -59,15 +60,4 @@ public class LocalController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/filtros")
-    public ResponseEntity<List<LocalDTO>> findLocalByFilters(
-        @RequestParam(defaultValue = "") LocalDateTime startDate,
-        @RequestParam(defaultValue = "") LocalDateTime endDate,
-        @RequestParam(defaultValue = "") String nomeDevice,
-        @RequestParam(defaultValue = "") String nomeUsuario
-    ) {
-
-        List<LocalDTO> locals = localService.findLocalByFilters(startDate, endDate, nomeDevice, nomeUsuario);
-        return ResponseEntity.ok(locals);
-    }
 }

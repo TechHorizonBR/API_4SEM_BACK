@@ -1,6 +1,7 @@
 package br.fatec.bd4.service;
 
 import br.fatec.bd4.entity.Local;
+import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.repository.LocalRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
 
-import br.fatec.bd4.web.dto.LocalDTO;
 
 @Service
 public class LocalService {
@@ -44,10 +44,7 @@ public class LocalService {
         return localRepository.save(local);
     }
 
-    public List<LocalDTO> findLocalByFilters(LocalDateTime startDate, LocalDateTime endDate , String nomeDevice, String nomeUsuario) {
-        return localRepository.findLocalByFilters(startDate, endDate, nomeDevice, nomeUsuario);
-    }
-    
+
     @Transactional
     public Local findByLatitudeAndLongitude(Local local){
         Optional<Local> localFound = localRepository.findByLatitudeAndLongitude(local.getLatitude(), local.getLongitude());
