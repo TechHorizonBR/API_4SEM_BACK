@@ -13,12 +13,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RegistroRepository extends JpaRepository<Registro, Long> {
 
-    @Query(value = "SELECT R FROM Registro R WHERE R.dataHora BETWEEN TO_TIMESTAMP(:startDate, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP(:endDate, 'YYYY-MM-DD HH24:MI:SS') " +
-                   "AND R.usuario.id = :idUsuario")
+    @Query(
+        "SELECT R FROM Registro R WHERE R.dataHora BETWEEN TO_TIMESTAMP(:startDate, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP(:endDate, 'YYYY-MM-DD HH24:MI:SS') " +
+        "AND R.usuario.id = :idUsuario " +
+        "ORDER BY R.dataHora ASC"
+    )
     List<Registro> findLocalByFilters( 
-        @Param("startDate") String startDate,
-        @Param("endDate") String endDate,
-        @Param("idUsuario") Long idUsuario
-    );    
+    @Param("startDate") String startDate,
+    @Param("endDate") String endDate,
+    @Param("idUsuario") Long idUsuario
+);
 
 }
