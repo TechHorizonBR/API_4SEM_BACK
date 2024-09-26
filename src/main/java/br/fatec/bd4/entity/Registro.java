@@ -21,10 +21,15 @@ public class Registro {
     private LocalDateTime dataHora;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "device_id") // DEVICE
-    private Device device;
+    @JoinColumn(name = "usuario_id") // DEVICE
+    private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "local_id") // LOCAL
     private Local local;
+    public Registro(LocalDateTime dataHora, Usuario usuario, Local local){
+        this.dataHora = dataHora;
+        this.usuario = usuario;
+        this.local = local;
+    }
 }

@@ -5,6 +5,7 @@ import br.fatec.bd4.repository.LocalRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,5 +46,16 @@ public class LocalService {
 
     public List<LocalDTO> findLocalByFilters(LocalDateTime startDate, LocalDateTime endDate , String nomeDevice, String nomeUsuario) {
         return localRepository.findLocalByFilters(startDate, endDate, nomeDevice, nomeUsuario);
+    }
+    
+    @Transactional
+    public Local findByLatitudeAndLongitude(Local local){
+        Optional<Local> localFound = localRepository.findByLatitudeAndLongitude(local.getLatitude(), local.getLongitude());
+
+        if (localFound.isEmpty()){
+            return localRepository.save(new Local(local.getNome(), local.getLatitude(), local.getLongitude()));
+        }else{
+            return localFound.get();
+        }
     }
 }

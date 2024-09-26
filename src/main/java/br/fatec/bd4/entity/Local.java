@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
-
 @Entity
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
@@ -24,4 +23,10 @@ public class Local {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "local")
     private List<Registro> registros;
+
+    public Local(String nome, Double latitude, Double longitude){
+        this.nome = nome;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

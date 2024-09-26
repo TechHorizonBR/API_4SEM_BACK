@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import br.fatec.bd4.web.dto.LocalDTO;
+import java.util.Optional;
 
 @Repository
 public interface LocalRepository extends JpaRepository<Local, Long> {
@@ -32,4 +33,7 @@ public interface LocalRepository extends JpaRepository<Local, Long> {
         @Param("device") String nomeDevice,
         @Param("usuario") String nomeUsuario
     );    
+    
+    Optional<Local> findByLatitudeAndLongitude(Double latitute, Double longitude);
+    
 }
