@@ -32,12 +32,12 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public Usuario findByNameAndCreate(String nome){
-        Optional<Usuario> usuario = usuarioRepository.findByNome(nome);
+        Optional<Usuario> usuario = usuarioRepository.findByNome(nome.toUpperCase());
 
         if (usuario.isPresent()){
             return usuario.get();
         }else{
-            return usuarioRepository.save(new Usuario(nome));
+            return usuarioRepository.save(new Usuario(nome.toUpperCase()));
         }
     }
     public Usuario save(Usuario usuario) {
@@ -61,7 +61,7 @@ public class UsuarioService {
             Optional<Usuario> usuarioFound = usuarioRepository.findByNome(user.fullName());
 
             if(usuarioFound.isEmpty()){
-                Usuario userCadastrado = usuarioRepository.save(new Usuario(user.fullName()));
+                Usuario userCadastrado = usuarioRepository.save(new Usuario(user.fullName().toUpperCase()));
                 deviceService.save(new Device(user.codigoDevice(), user.macAddress(),userCadastrado));
             }
         }

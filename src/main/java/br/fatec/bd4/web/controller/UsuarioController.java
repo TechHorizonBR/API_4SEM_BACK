@@ -2,7 +2,12 @@ package br.fatec.bd4.web.controller;
 
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.service.UsuarioService;
+import br.fatec.bd4.web.dto.UserDeviceDataDTO;
 import br.fatec.bd4.web.dto.UserInputDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,9 +60,20 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Endpoint responsible for putting new user into application.",
+            description = "Endpoint responsible for putting new user into application, receiving a list of UserInputDTO to input the data.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Users have been created.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))
+                    )
+            }
+    )
     @PostMapping("/input-users")
     public ResponseEntity<Void> inputUsers(@RequestBody List<UserInputDTO> users){
         usuarioService.inputUsers(users);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
