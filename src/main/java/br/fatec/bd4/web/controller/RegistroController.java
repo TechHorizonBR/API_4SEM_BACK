@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/registros")
+@CrossOrigin("*")
 public class RegistroController {
 
     @Autowired
