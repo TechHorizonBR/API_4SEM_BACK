@@ -2,6 +2,7 @@ package br.fatec.bd4.web.controller;
 
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.RegistroService;
+import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -62,5 +63,16 @@ public class RegistroController {
     public ResponseEntity<Void> inputRegisters(@RequestBody List<RegisterInputDTO> registers){
         registroService.inputRegisters(registers);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}")
+    public ResponseEntity<List<RegisterDTO>> findLocalByFilters(
+        @PathVariable() String startDate,
+        @PathVariable() String endDate,
+        @PathVariable() Long idUsuario
+    ) {
+
+        List<RegisterDTO> registros = registroService.findLocalByFilters(startDate, endDate, idUsuario);
+        return ResponseEntity.ok(registros);
     }
 }
