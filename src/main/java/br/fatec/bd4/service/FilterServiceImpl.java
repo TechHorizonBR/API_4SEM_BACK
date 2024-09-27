@@ -22,7 +22,8 @@ public class FilterServiceImpl implements FilterService{
         List<Usuario> users = usuarioRepository.findAllUsuarios();
 
         List<UserDeviceDataDTO> usersData = users.stream()
-                .map(user -> new UserDeviceDataDTO(user))
+                .filter(user -> user.getDevice() != null && user.getId() != null) // Filtra os nulos
+                .map(UserDeviceDataDTO::new) // Mapeia para o DTO apenas os filtrados
                 .collect(Collectors.toList());
 
         return usersData;
