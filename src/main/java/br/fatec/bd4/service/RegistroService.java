@@ -5,13 +5,16 @@ import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.RegistroRepository;
+import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RegistroService {
@@ -52,5 +55,19 @@ public class RegistroService {
             }
         }
     }
+
+    public List<RegisterDTO> findLocalByFilters(String startDate, String endDate , Long idUsuario) {
+    List<Registro> registers = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
+    return registers.stream()
+    .map(registro -> new RegisterDTO(
+            registro.getDataHora(),
+            registro.getLocal().getLatitude(),
+            registro.getLocal().getLongitude()
+    ))
+    .collect(Collectors.toList());
+
+    }
+    
 }
+
 

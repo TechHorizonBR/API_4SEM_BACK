@@ -1,7 +1,14 @@
 package br.fatec.bd4.web.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import br.fatec.bd4.entity.FilterLocal;
 import br.fatec.bd4.entity.Local;
+import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.LocalService;
+import br.fatec.bd4.web.dto.LocalDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,4 +59,5 @@ public class LocalController {
         localService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
 }

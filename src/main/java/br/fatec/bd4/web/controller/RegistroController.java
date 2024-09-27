@@ -2,6 +2,7 @@ package br.fatec.bd4.web.controller;
 
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.RegistroService;
+import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,5 +48,16 @@ public class RegistroController {
     public ResponseEntity<Void> inputRegisters(@RequestBody List<RegisterInputDTO> registers){
         registroService.inputRegisters(registers);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}")
+    public ResponseEntity<List<RegisterDTO>> findLocalByFilters(
+        @PathVariable() String startDate,
+        @PathVariable() String endDate,
+        @PathVariable() Long idUsuario
+    ) {
+
+        List<RegisterDTO> registros = registroService.findLocalByFilters(startDate, endDate, idUsuario);
+        return ResponseEntity.ok(registros);
     }
 }
