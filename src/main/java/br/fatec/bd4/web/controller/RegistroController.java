@@ -66,6 +66,19 @@ public class RegistroController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(
+        summary = "Find local records by filters.",
+        description = "Endpoint responsible for getting a registered location filtered by date range and user ID.",
+        responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully retrieved filtered records.",
+                        content = @Content(mediaType = "application/json", schema = @Schema(
+                        implementation = RegisterDTO.class)
+                            )
+                    )
+                }
+            )
     @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}")
     public ResponseEntity<List<RegisterDTO>> findLocalByFilters(
         @PathVariable() String startDate,
