@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,18 +63,31 @@ public class RegistroService {
     }
 
     @Cacheable("registros")
+    @Transactional(readOnly = true)
     public List<RegisterDTO> findLocalByFilters(String startDate, String endDate , Long idUsuario) {
-    List<Registro> registers = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
-    return registers.stream()
-    .map(registro -> new RegisterDTO(
-            registro.getDataHora(),
-            registro.getLocal().getLatitude(),
-            registro.getLocal().getLongitude()
-    ))
-    .collect(Collectors.toList());
 
+        List<Registro> registers = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
+
+        Set<String> uniqueCoordinates = new HashSet<>();
+
+        return registers.stream()
+                .filter(registro -> {
+                    String coordinatesKey = registro.getLocal().getLatitude() + "," + registro.getLocal().getLongitude();
+                    if (uniqueCoordinates.contains(coordinatesKey)) {
+                        return false;
+                    } else {
+                        uniqueCoordinates.add(coordinatesKey);
+                        return true;
+                    }
+                })
+                .map(registro -> new RegisterDTO(
+                        registro.getDataHora(),
+                        registro.getLocal().getLatitude(),
+                        registro.getLocal().getLongitude()
+                ))
+                .collect(Collectors.toList());
     }
-    
+
 }
 
 
