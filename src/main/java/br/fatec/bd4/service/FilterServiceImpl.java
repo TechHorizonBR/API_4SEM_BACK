@@ -5,6 +5,7 @@ import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.service.interfaces.FilterService;
 import br.fatec.bd4.web.dto.UserDeviceDataDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class FilterServiceImpl implements FilterService{
 
     @Transactional(readOnly = true)
     @Override
+    @Cacheable("usuariosDevices")
     public List<UserDeviceDataDTO> getUsersDevice() {
         List<Usuario> users = usuarioRepository.findAllUsuarios();
 

@@ -8,6 +8,7 @@ import br.fatec.bd4.repository.RegistroRepository;
 import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +60,7 @@ public class RegistroService {
         }
     }
 
+    @Cacheable("registros")
     public List<RegisterDTO> findLocalByFilters(String startDate, String endDate , Long idUsuario) {
     List<Registro> registers = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
     return registers.stream()
