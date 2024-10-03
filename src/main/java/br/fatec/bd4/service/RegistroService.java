@@ -1,14 +1,17 @@
 package br.fatec.bd4.service;
 
-import br.fatec.bd4.entity.Device;
 import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.RegistroRepository;
 import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
+import br.fatec.bd4.web.dto.RegistersResponseDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,27 +53,32 @@ public class RegistroService {
     @Transactional
     public void inputRegisters(List<RegisterInputDTO> registers) {
         for(RegisterInputDTO register : registers){
-            if(!register.fullName().equals("") && register.latitude() != null && register.longitude() != null && !register.createdAt().equals("")){
-                String name = register.fullName().trim();
-                String date = register.createdAt().trim();
-                date = date.replace(" ", "");
-                LocalDateTime newDate = LocalDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
-                Local local = localService.findByLatitudeAndLongitude(new Local(register.localName(), register.latitude(), register.longitude()));
-                Usuario usuario = usuarioService.findByNameAndCreate(name);
-                registroRepository.save(new Registro(newDate, usuario, local));
+            if(register.fullName()!= null){
+                if(!register.fullName().equals("") && register.latitude() != null && register.longitude() != null && !register.createdAt().equals("")){
+                    String name = register.fullName().trim();
+                    String date = register.createdAt().trim();
+                    date = date.replace(" ", "");
+                    LocalDateTime newDate = LocalDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
+                    Local local = localService.findByLatitudeAndLongitude(new Local(register.localName(), register.latitude(), register.longitude()));
+                    Usuario usuario = usuarioService.findByNameAndCreate(name);
+                    registroRepository.save(new Registro(newDate, usuario, local));
+                }
             }
+            
         }
     }
 
     @Cacheable("registros")
     @Transactional(readOnly = true)
-    public List<RegisterDTO> findLocalByFilters(String startDate, String endDate , Long idUsuario) {
+    public RegistersResponseDTO findLocalByFilters(String startDate, String endDate , Long idUsuario, int currentPage) {
 
-        List<Registro> registers = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
+        PageRequest pageRequest = PageRequest.of(currentPage, 10);
+
+        Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario, pageRequest);
 
         Set<String> uniqueCoordinates = new HashSet<>();
 
-        return registers.stream()
+        List<RegisterDTO> registrosDto =  registrosPages.stream()
                 .filter(registro -> {
                     String coordinatesKey = registro.getLocal().getLatitude() + "," + registro.getLocal().getLongitude();
                     if (uniqueCoordinates.contains(coordinatesKey)) {
@@ -86,6 +94,11 @@ public class RegistroService {
                         registro.getLocal().getLongitude()
                 ))
                 .collect(Collectors.toList());
+
+        int pageActual = registrosPages.getNumber();
+        int totalPages = registrosPages.getTotalPages();
+
+        return new RegistersResponseDTO(registrosDto, pageActual, totalPages);
     }
 
 }

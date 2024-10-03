@@ -4,6 +4,7 @@ import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.RegistroService;
 import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
+import br.fatec.bd4.web.dto.RegistersResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -79,14 +80,13 @@ public class RegistroController {
                     )
                 }
             )
-    @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}")
-    public ResponseEntity<List<RegisterDTO>> findLocalByFilters(
+    @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}/{actualPage}")
+    public ResponseEntity<RegistersResponseDTO> findLocalByFilters(
         @PathVariable() String startDate,
         @PathVariable() String endDate,
-        @PathVariable() Long idUsuario
+        @PathVariable() Long idUsuario,
+        @PathVariable() int actualPage
     ) {
-
-        List<RegisterDTO> registros = registroService.findLocalByFilters(startDate, endDate, idUsuario);
-        return ResponseEntity.ok(registros);
+        return ResponseEntity.status(HttpStatus.OK).body(registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage));
     }
 }
