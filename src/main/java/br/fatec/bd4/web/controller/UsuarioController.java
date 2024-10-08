@@ -1,23 +1,30 @@
 package br.fatec.bd4.web.controller;
 
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.ResponseSchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuarios")
+@CrossOrigin("*")
 public class UsuarioController {
 
     @Autowired
@@ -25,7 +32,7 @@ public class UsuarioController {
 
     @Operation(summary = "Retorna todos os usuários")
     @ApiResponse(responseCode = "200", description = "Usuários encontrados", 
-                 content = @Content(mediaType = "application/json", 
+    content = @Content(mediaType = "application/json", 
                                     schema = @Schema(implementation = Usuario.class)))
     @GetMapping
     public ResponseEntity<List<Usuario>> getAllUsuarios() {
@@ -36,19 +43,19 @@ public class UsuarioController {
     @Operation(summary = "Retorna um usuário específico pelo ID")
     @Parameter(name = "id", description = "ID do usuário", required = true)
     @ApiResponse(responseCode = "200", description = "Usuário encontrado", 
-                 content = @Content(mediaType = "application/json", 
+    content = @Content(mediaType = "application/json", 
                                     schema = @Schema(implementation = Usuario.class)))
     @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
         Optional<Usuario> usuario = usuarioService.findById(id);
         return usuario.map(ResponseEntity::ok)
-                      .orElseGet(() -> ResponseEntity.notFound().build());
+        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Cria um novo usuário")
     @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso", 
-                 content = @Content(mediaType = "application/json", 
+    content = @Content(mediaType = "application/json", 
                                     schema = @Schema(implementation = Usuario.class)))
     @ApiResponse(responseCode = "400", description = "Requisição inválida")
     @PostMapping
@@ -60,7 +67,7 @@ public class UsuarioController {
     @Operation(summary = "Atualiza um usuário existente")
     @Parameter(name = "id", description = "ID do usuário a ser atualizado", required = true)
     @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso", 
-                 content = @Content(mediaType = "application/json", 
+    content = @Content(mediaType = "application/json", 
                                     schema = @Schema(implementation = Usuario.class)))
     @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @PutMapping("/{id}")
