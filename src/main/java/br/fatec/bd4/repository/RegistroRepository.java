@@ -24,10 +24,9 @@ public interface RegistroRepository extends JpaRepository<Registro, Long> {
     MaxMinDTO findMaxRegistro(@Param("idUsuario") Long idUsuario);
 
     @Query(
-            value = "SELECT * FROM registro R WHERE R.data_hora BETWEEN TO_TIMESTAMP(:startDate, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP(:endDate, 'YYYY-MM-DD HH24:MI:SS') " +
-                    "AND R.usuario_id = :idUsuario " +
-                    "ORDER BY R.data_hora ASC",
-            nativeQuery = true
+            "SELECT R FROM Registro R WHERE R.dataHora BETWEEN TO_TIMESTAMP(:startDate, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP(:endDate, 'YYYY-MM-DD HH24:MI:SS') " +
+                    "AND R.usuario.id = :idUsuario " +
+                    "ORDER BY R.dataHora ASC"
     )
     Page<Registro> findLocalByFilters(
     @Param("startDate") String startDate,
