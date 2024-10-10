@@ -4,6 +4,7 @@ import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.RegistroRepository;
+import br.fatec.bd4.web.dto.MaxMinDTO;
 import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
 import br.fatec.bd4.web.dto.RegistersResponseDTO;
@@ -17,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,6 +66,8 @@ public class RegistroService {
         }
     }
 
+
+
     @Cacheable("registros")
     @Transactional(readOnly = true)
     public RegistersResponseDTO findLocalByFilters(String startDate, String endDate , Long idUsuario, int currentPage) {
@@ -75,6 +75,8 @@ public class RegistroService {
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
 
         Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario, pageRequest);
+
+        MaxMinDTO coordinatesBounds = registroRepository.findMaxRegistro(idUsuario);
 
         Set<String> uniqueCoordinates = new HashSet<>();
 
@@ -98,7 +100,7 @@ public class RegistroService {
         int pageActual = registrosPages.getNumber();
         int totalPages = registrosPages.getTotalPages();
 
-        return new RegistersResponseDTO(registrosDto, pageActual, totalPages);
+        return new RegistersResponseDTO(registrosDto, pageActual, totalPages, coordinatesBounds);
     }
 
 }
