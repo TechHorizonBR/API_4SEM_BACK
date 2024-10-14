@@ -76,7 +76,7 @@ public class RegistroService {
 
         Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario, pageRequest);
 
-        MaxMinDTO coordinatesBounds = registroRepository.findMaxRegistro(idUsuario);
+        MaxMinDTO coordinatesBounds = registroRepository.findMaxRegistro(startDate, endDate, idUsuario);
 
         Set<String> uniqueCoordinates = new HashSet<>();
 
