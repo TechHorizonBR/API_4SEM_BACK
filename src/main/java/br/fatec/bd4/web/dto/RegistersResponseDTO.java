@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 public record RegistersResponseDTO(
     @JsonAlias("registros") List<RegisterDTO> registers,
     @JsonAlias("paginaAtual") int currentPage,
-    @JsonAlias("totalPaginas") int totalPages
+    @JsonAlias("totalPaginas") int totalPages,
+    @JsonAlias("coordBounds") MaxMinDTO maxMinCoordinates
 ) {
     
 }
