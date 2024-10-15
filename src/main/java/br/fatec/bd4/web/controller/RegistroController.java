@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +67,13 @@ public class RegistroController {
         registroService.inputRegisters(registers);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/input-registers-upload-file")
+    public ResponseEntity<Void> inputRegistersByUpload(@RequestParam("file") MultipartFile file){
+        registroService.inputRegistersByUploadFile(file);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 
     @Operation(
         summary = "Find local records by filters.",

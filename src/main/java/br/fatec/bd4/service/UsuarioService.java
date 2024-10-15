@@ -2,10 +2,8 @@ package br.fatec.bd4.service;
 
 import br.fatec.bd4.entity.Device;
 import br.fatec.bd4.entity.Usuario;
-import br.fatec.bd4.repository.DeviceRepository;
 import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.web.dto.UserInputDTO;
-import br.fatec.bd4.web.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +56,7 @@ public class UsuarioService {
     @Transactional
     public void inputUsers(List<UserInputDTO> users) {
         for(UserInputDTO user : users){
-            Optional<Usuario> usuarioFound = usuarioRepository.findByNome(user.fullName());
+            Optional<Usuario> usuarioFound = usuarioRepository.findByNome(user.fullName().toUpperCase());
 
             if(usuarioFound.isEmpty()){
                 Usuario userCadastrado = usuarioRepository.save(new Usuario(user.fullName().toUpperCase()));
