@@ -1,5 +1,20 @@
 package br.fatec.bd4.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.entity.Usuario;
@@ -7,21 +22,6 @@ import br.fatec.bd4.repository.RegistroRepository;
 import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
 import br.fatec.bd4.web.dto.RegistersResponseDTO;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class RegistroService {
@@ -49,7 +49,10 @@ public class RegistroService {
         registroRepository.deleteById(id);
     }
 
-
+    public List<Registro> findLocalByFilters(String startDate, String endDate, Long idUsuario) {
+        return registroRepository.saveAll(null);
+    }
+    
     @Transactional
     public void inputRegisters(List<RegisterInputDTO> registers) {
         for(RegisterInputDTO register : registers){
@@ -69,36 +72,50 @@ public class RegistroService {
     }
 
     @Cacheable("registros")
-    @Transactional(readOnly = true)
-    public RegistersResponseDTO findLocalByFilters(String startDate, String endDate , Long idUsuario, int currentPage) {
+@Transactional(readOnly = true)
+public boolean compareRegisters(String startDate, String endDate, Long idUsuario) {
+    PageRequest pageRequest = PageRequest.of(0, 10);
 
-        PageRequest pageRequest = PageRequest.of(currentPage, 10);
+    Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
 
-        Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario, pageRequest);
+    List<Registro> registros = registrosPages.getContent();
 
-        Set<String> uniqueCoordinates = new HashSet<>();
+    for (int i = 0; i < registros.size() - 1; i++) {
+        Registro primeiroRegistro = registros.get(i);
+        Registro segundoRegistro = registros.get(i + 1);
 
-        List<RegisterDTO> registrosDto =  registrosPages.stream()
-                .filter(registro -> {
-                    String coordinatesKey = registro.getLocal().getLatitude() + "," + registro.getLocal().getLongitude();
-                    if (uniqueCoordinates.contains(coordinatesKey)) {
-                        return false;
-                    } else {
-                        uniqueCoordinates.add(coordinatesKey);
-                        return true;
-                    }
-                })
-                .map(registro -> new RegisterDTO(
-                        registro.getDataHora(),
-                        registro.getLocal().getLatitude(),
-                        registro.getLocal().getLongitude()
-                ))
-                .collect(Collectors.toList());
+   
+    if (primeiroRegistro.getLocal().getLatitude() == segundoRegistro.getLocal().getLatitude()) {
+           
+            long diffInMillis = Math.abs(primeiroRegistro.getDataHora().getSecond() - segundoRegistro.getDataHora().getSecond());
+            long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
 
-        int pageActual = registrosPages.getNumber();
+        if (diffInMinutes > 15) {
+            return true; 
+        }
+    }
+}
+    
+    return false; 
+}
+
+public boolean isStopped(String startDate, String endDate, Long idUsuario) {
+    return compareRegisters(startDate, endDate, idUsuario);
+}
+        public RegistersResponseDTO findLocalByFilters(String startDate, String endDate, Long idUsuario, int actualPage) {
+        PageRequest pageRequest = PageRequest.of(actualPage, 10);
+        Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
+
+        List<RegisterDTO> registrosDto = registrosPages.stream()
+            .map(registro -> new RegisterDTO(
+                registro.getDataHora(),
+                registro.getLocal().getLatitude(),
+                registro.getLocal().getLongitude()
+            ))
+            .collect(Collectors.toList());
+
         int totalPages = registrosPages.getTotalPages();
-
-        return new RegistersResponseDTO(registrosDto, pageActual, totalPages);
+        return new RegistersResponseDTO(registrosDto, actualPage, totalPages, false); // Inicialmente isStopped é false
     }
 
 }

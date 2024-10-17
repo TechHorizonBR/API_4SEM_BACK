@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import br.fatec.bd4.repository.RegistroRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,16 +78,24 @@ public class RegistroController {
                         content = @Content(mediaType = "application/json", schema = @Schema(
                         implementation = RegisterDTO.class)
                             )
-                    )
-                }
-            )
+                )
+        }
+    )
     @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}/{actualPage}")
     public ResponseEntity<RegistersResponseDTO> findLocalByFilters(
-        @PathVariable() String startDate,
-        @PathVariable() String endDate,
-        @PathVariable() Long idUsuario,
-        @PathVariable() int actualPage
-    ) {
-        return ResponseEntity.status(HttpStatus.OK).body(registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage));
+        @PathVariable String startDate,
+        @PathVariable String endDate,
+        @PathVariable Long idUsuario,
+        @PathVariable int actualPage
+    )
+    {
+        RegistersResponseDTO response = registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage);
+        boolean isStopped = registroService.isStopped(startDate, endDate, idUsuario); // Verifica se está parado
+    
+        // Atualiza a resposta com o campo isStopped
+            response = new RegistersResponseDTO(response.registers(), response.currentPage(), response.totalPages(), isStopped);
+    
+        return ResponseEntity.ok(response);
     }
-}
+    }
+

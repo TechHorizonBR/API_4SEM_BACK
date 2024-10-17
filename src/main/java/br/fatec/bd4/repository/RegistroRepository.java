@@ -1,6 +1,8 @@
 package br.fatec.bd4.repository;
 
 import br.fatec.bd4.entity.Registro;
+import br.fatec.bd4.web.dto.RegistersResponseDTO;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +20,14 @@ public interface RegistroRepository extends JpaRepository<Registro, Long> {
         "ORDER BY R.dataHora ASC"
     )
     Page<Registro> findLocalByFilters( 
-    @Param("startDate") String startDate,
-    @Param("endDate") String endDate,
-    @Param("idUsuario") Long idUsuario,
-    Pageable pageable
-);
+        @Param("startDate") String startDate,
+        @Param("endDate") String endDate,
+        @Param("idUsuario") Long idUsuario,
+        Pageable pageable);
 
+    Page<Registro> findLocalByFilters(String startDate, String endDate, Long idUsuario);
+
+
+    
+    
 }
