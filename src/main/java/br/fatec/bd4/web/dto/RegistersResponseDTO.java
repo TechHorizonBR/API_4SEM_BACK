@@ -8,7 +8,7 @@ public record RegistersResponseDTO(
     @JsonAlias("registros") List<RegisterDTO> registers,
     @JsonAlias("paginaAtual") int currentPage,
     @JsonAlias("totalPaginas") int totalPages,
-    @JsonAlias("isStopped") boolean isStopped
-) {
+    @JsonAlias("coordBounds") MaxMinDTO maxMinCoordinates
+) 
+{ }
     
-}

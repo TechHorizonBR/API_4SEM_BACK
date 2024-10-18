@@ -19,9 +19,31 @@ import br.fatec.bd4.entity.Local;
 import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.RegistroRepository;
+import br.fatec.bd4.web.dto.MaxMinDTO;
 import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
 import br.fatec.bd4.web.dto.RegistersResponseDTO;
+import br.fatec.bd4.web.exception.EmptyFileException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RegistroService {
@@ -49,75 +71,143 @@ public class RegistroService {
         registroRepository.deleteById(id);
     }
 
-    public List<Registro> findLocalByFilters(String startDate, String endDate, Long idUsuario) {
-        return registroRepository.saveAll(null);
+    public boolean isValidLatitude(double latitude) {
+        return latitude >= -90 && latitude <= 90;
     }
-    
+
+    public boolean isValidLongitude(double longitude) {
+        return longitude >= -180 && longitude <= 180;
+    }
+
+    @Transactional
+    public void inputRegistersByUploadFile(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new EmptyFileException("File is Empty");
+        }
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+
+            while ((line = buffer.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                String[] fields = line.split(";");
+                System.out.println(fields[4]);
+
+                if (fields.length < 5 || fields[1].trim().isEmpty() || fields[2].trim().isEmpty()
+                        || fields[3].trim().isEmpty() || fields[4].trim().isEmpty()) {
+                    continue;
+                }
+
+                String fullName = fields[4].trim();
+                String createdAt = fields[1].trim();
+                double latitude = 0;
+                double longitude = 0;
+
+                try {
+                    latitude = Double.parseDouble(fields[2].trim());
+                    longitude = Double.parseDouble(fields[3].trim());
+
+                } catch (NumberFormatException e) {
+                    continue;
+                }
+
+                if (isValidLatitude(latitude) && isValidLongitude(longitude)) {
+                    LocalDateTime newDate = null;
+
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+                        newDate = LocalDateTime.parse(createdAt, formatter);
+                    } catch (DateTimeParseException e) {
+                        continue;
+                    }
+
+                    if (newDate != null) {
+                        Local local = localService
+                                .findByLatitudeAndLongitude(new Local(fields[6], latitude, longitude));
+
+                        Usuario usuario = usuarioService.findByNameAndCreate(fullName);
+
+                        registroRepository.save(new Registro(newDate, usuario, local));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao processar o arquivo CSV", e);
+        }
+    }
+
     @Transactional
     public void inputRegisters(List<RegisterInputDTO> registers) {
-        for(RegisterInputDTO register : registers){
-            if(register.fullName()!= null){
-                if(!register.fullName().equals("") && register.latitude() != null && register.longitude() != null && !register.createdAt().equals("")){
+
+        for (RegisterInputDTO register : registers) {
+            if (register.fullName() != null) {
+                if (!register.fullName().equals("") && register.latitude() != null && register.longitude() != null
+                        && !register.createdAt().equals("")) {
                     String name = register.fullName().trim();
                     String date = register.createdAt().trim();
                     date = date.replace(" ", "");
                     LocalDateTime newDate = LocalDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
-                    Local local = localService.findByLatitudeAndLongitude(new Local(register.localName(), register.latitude(), register.longitude()));
+                    Local local = localService.findByLatitudeAndLongitude(
+                            new Local(register.localName(), register.latitude(), register.longitude()));
                     Usuario usuario = usuarioService.findByNameAndCreate(name);
                     registroRepository.save(new Registro(newDate, usuario, local));
                 }
             }
-            
+
         }
     }
 
     @Cacheable("registros")
-@Transactional(readOnly = true)
-public boolean compareRegisters(String startDate, String endDate, Long idUsuario) {
-    PageRequest pageRequest = PageRequest.of(0, 10);
+    @Transactional(readOnly = true)
+    public boolean compareRegisters(String startDate, String endDate, Long idUsuario) {
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-    Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
+        Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario,
+                pageRequest);
 
-    List<Registro> registros = registrosPages.getContent();
+        List<Registro> registros = registrosPages.getContent();
 
-    for (int i = 0; i < registros.size() - 1; i++) {
-        Registro primeiroRegistro = registros.get(i);
-        Registro segundoRegistro = registros.get(i + 1);
+        for (int i = 0; i < registros.size() - 1; i++) {
+            Registro primeiroRegistro = registros.get(i);
+            Registro segundoRegistro = registros.get(i + 1);
 
-   
-    if (primeiroRegistro.getLocal().getLatitude() == segundoRegistro.getLocal().getLatitude()) {
-           
-            long diffInMillis = Math.abs(primeiroRegistro.getDataHora().getSecond() - segundoRegistro.getDataHora().getSecond());
-            long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+            if (primeiroRegistro.getLocal().getLatitude() == segundoRegistro.getLocal().getLatitude()) {
 
-        if (diffInMinutes > 15) {
-            return true; 
+                long diffInMillis = Math
+                        .abs(primeiroRegistro.getDataHora().getSecond() - segundoRegistro.getDataHora().getSecond());
+                long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+
+                if (diffInMinutes > 15) {
+                    return true;
+                }
+            }
         }
+
+        return false;
     }
-}
-    
-    return false; 
-}
 
-public boolean isStopped(String startDate, String endDate, Long idUsuario) {
-    return compareRegisters(startDate, endDate, idUsuario);
-}
-        public RegistersResponseDTO findLocalByFilters(String startDate, String endDate, Long idUsuario, int actualPage) {
+    public boolean isStopped(String startDate, String endDate, Long idUsuario) {
+        return compareRegisters(startDate, endDate, idUsuario);
+    }
+
+    public RegistersResponseDTO findLocalByFilters(String startDate, String endDate, Long idUsuario, int actualPage) {
         PageRequest pageRequest = PageRequest.of(actualPage, 10);
-        Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario);
+        Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario,
+                pageRequest);
 
+        MaxMinDTO coordinatesBounds = registroRepository.findMaxRegistro(startDate, endDate, idUsuario);
         List<RegisterDTO> registrosDto = registrosPages.stream()
-            .map(registro -> new RegisterDTO(
-                registro.getDataHora(),
-                registro.getLocal().getLatitude(),
-                registro.getLocal().getLongitude()
-            ))
-            .collect(Collectors.toList());
+                .map(registro -> new RegisterDTO(
+                        registro.getDataHora(),
+                        registro.getLocal().getLatitude(),
+                        registro.getLocal().getLongitude(), 
+                        isStopped(startDate, endDate, idUsuario)))
+                .collect(Collectors.toList());
 
         int totalPages = registrosPages.getTotalPages();
-        return new RegistersResponseDTO(registrosDto, actualPage, totalPages, false); // Inicialmente isStopped é false
+        return new RegistersResponseDTO(registrosDto, actualPage, totalPages, coordinatesBounds);
     }
 
 }
-
-

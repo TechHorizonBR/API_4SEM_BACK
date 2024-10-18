@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import br.fatec.bd4.repository.RegistroRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,6 +69,13 @@ public class RegistroController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/input-registers-upload-file")
+    public ResponseEntity<Void> inputRegistersByUpload(@RequestParam("file") MultipartFile file){
+        registroService.inputRegistersByUploadFile(file);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
     @Operation(
         summary = "Find local records by filters.",
         description = "Endpoint responsible for getting a registered location filtered by date range and user ID.",
@@ -90,10 +98,7 @@ public class RegistroController {
     )
     {
         RegistersResponseDTO response = registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage);
-        boolean isStopped = registroService.isStopped(startDate, endDate, idUsuario); // Verifica se está parado
-    
-        // Atualiza a resposta com o campo isStopped
-            response = new RegistersResponseDTO(response.registers(), response.currentPage(), response.totalPages(), isStopped);
+                    
     
         return ResponseEntity.ok(response);
     }
