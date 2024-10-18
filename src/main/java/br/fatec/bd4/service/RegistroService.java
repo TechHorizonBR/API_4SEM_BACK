@@ -179,13 +179,13 @@ public class RegistroService {
                         .abs(primeiroRegistro.getDataHora().getSecond() - segundoRegistro.getDataHora().getSecond());
                 long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
 
-                if (diffInMinutes > 15) {
-                    return true;
+                if (diffInMinutes > 15 && !primeiroRegistro.equals(segundoRegistro)) {
+                    return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
     public boolean isStopped(String startDate, String endDate, Long idUsuario) {
