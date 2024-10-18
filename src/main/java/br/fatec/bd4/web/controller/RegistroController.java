@@ -85,16 +85,21 @@ public class RegistroController {
                         content = @Content(mediaType = "application/json", schema = @Schema(
                         implementation = RegisterDTO.class)
                             )
-                    )
-                }
-            )
+                )
+        }
+    )
     @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}/{actualPage}")
     public ResponseEntity<RegistersResponseDTO> findLocalByFilters(
-        @PathVariable() String startDate,
-        @PathVariable() String endDate,
-        @PathVariable() Long idUsuario,
-        @PathVariable() int actualPage
-    ) {
-        return ResponseEntity.status(HttpStatus.OK).body(registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage));
+        @PathVariable String startDate,
+        @PathVariable String endDate,
+        @PathVariable Long idUsuario,
+        @PathVariable int actualPage
+    )
+    {
+        RegistersResponseDTO response = registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage);
+                    
+    
+        return ResponseEntity.ok(response);
     }
-}
+    }
+

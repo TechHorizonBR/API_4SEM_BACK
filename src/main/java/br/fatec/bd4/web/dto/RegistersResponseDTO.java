@@ -9,6 +9,6 @@ public record RegistersResponseDTO(
     @JsonAlias("paginaAtual") int currentPage,
     @JsonAlias("totalPaginas") int totalPages,
     @JsonAlias("coordBounds") MaxMinDTO maxMinCoordinates
-) {
+) 
+{ }
     
-}
