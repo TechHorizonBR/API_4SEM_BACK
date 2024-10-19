@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 public record RegisterDTO(
         @JsonAlias("dataHora") LocalDateTime dataHora,
         @JsonAlias("Latitude") double latitude,
-        @JsonAlias("Longitude") double longitude
-) {
-}
+        @JsonAlias("Longitude") double longitude,
+        @JsonAlias("isStopped") boolean isStopped
+) { }
+        

@@ -26,10 +26,13 @@ public class Registro {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "local_id")
+
+    
     private Local local;
     public Registro(LocalDateTime dataHora, Usuario usuario, Local local){
         this.dataHora = dataHora;
         this.usuario = usuario;
         this.local = local;
+        
     }
 }
