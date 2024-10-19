@@ -21,7 +21,7 @@ public class Usuario {
     @Column(name = "nome", length = 200)
     private String nome;
 
-    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER)
     private Device device;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")

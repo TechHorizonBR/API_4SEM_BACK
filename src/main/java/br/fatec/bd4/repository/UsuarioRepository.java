@@ -13,6 +13,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("SELECT u FROM Usuario u order by u.nome ASC")
     List<Usuario> findAllUsuarios();
 
+    @Query("SELECT u FROM Usuario u where u.nome like %?1%")
     Optional<Usuario> findByNome(String nome);
 
 }

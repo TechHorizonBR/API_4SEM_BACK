@@ -4,6 +4,7 @@ import br.fatec.bd4.entity.Registro;
 import br.fatec.bd4.service.RegistroService;
 import br.fatec.bd4.web.dto.RegisterDTO;
 import br.fatec.bd4.web.dto.RegisterInputDTO;
+import br.fatec.bd4.web.dto.RegistersResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +68,13 @@ public class RegistroController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/input-registers-upload-file")
+    public ResponseEntity<Void> inputRegistersByUpload(@RequestParam("file") MultipartFile file){
+        registroService.inputRegistersByUploadFile(file);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
     @Operation(
         summary = "Find local records by filters.",
         description = "Endpoint responsible for getting a registered location filtered by date range and user ID.",
@@ -76,17 +85,21 @@ public class RegistroController {
                         content = @Content(mediaType = "application/json", schema = @Schema(
                         implementation = RegisterDTO.class)
                             )
-                    )
-                }
-            )
-    @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}")
-    public ResponseEntity<List<RegisterDTO>> findLocalByFilters(
-        @PathVariable() String startDate,
-        @PathVariable() String endDate,
-        @PathVariable() Long idUsuario
-    ) {
-
-        List<RegisterDTO> registros = registroService.findLocalByFilters(startDate, endDate, idUsuario);
-        return ResponseEntity.ok(registros);
+                )
+        }
+    )
+    @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}/{actualPage}")
+    public ResponseEntity<RegistersResponseDTO> findLocalByFilters(
+        @PathVariable String startDate,
+        @PathVariable String endDate,
+        @PathVariable Long idUsuario,
+        @PathVariable int actualPage
+    )
+    {
+        RegistersResponseDTO response = registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage);
+                    
+    
+        return ResponseEntity.ok(response);
     }
-}
+    }
+

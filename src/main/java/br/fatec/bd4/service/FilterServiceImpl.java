@@ -22,7 +22,7 @@ public class FilterServiceImpl implements FilterService{
     @Cacheable("usuariosDevices")
     public List<UserDeviceDataDTO> getUsersDevice() {
         List<Usuario> users = usuarioRepository.findAllUsuarios();
-
+        
         List<UserDeviceDataDTO> usersData = users.stream()
                 .filter(user -> user.getDevice() != null && user != null) // Filtra os nulos
                 .map(UserDeviceDataDTO::new) // Mapeia para o DTO apenas os filtrados
