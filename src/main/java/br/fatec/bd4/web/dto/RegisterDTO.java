@@ -2,7 +2,6 @@
 package br.fatec.bd4.web.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 

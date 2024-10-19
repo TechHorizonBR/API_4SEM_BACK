@@ -2,11 +2,10 @@ package br.fatec.bd4.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -145,53 +144,57 @@ public class RegistroService {
 
     @Cacheable("registros")
     @Transactional(readOnly = true)
-    public boolean compareRegisters(String startDate, String endDate, Long idUsuario) {
-        PageRequest pageRequest = PageRequest.of(0, 10);
-
-        Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario,
-                pageRequest);
-
-        List<Registro> registros = registrosPages.getContent();
-
-        for (int i = 0; i < registros.size() - 1; i++) {
-            Registro primeiroRegistro = registros.get(i);
-            Registro segundoRegistro = registros.get(i + 1);
-
-            if (primeiroRegistro.getLocal().getLatitude() == segundoRegistro.getLocal().getLatitude()) {
-
-                long diffInMillis = Math
-                        .abs(primeiroRegistro.getDataHora().getSecond() - segundoRegistro.getDataHora().getSecond());
-                long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
-
-                if (diffInMinutes > 15 && !primeiroRegistro.equals(segundoRegistro)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public boolean isStopped(String startDate, String endDate, Long idUsuario) {
-        return compareRegisters(startDate, endDate, idUsuario);
-    }
-
     public RegistersResponseDTO findLocalByFilters(String startDate, String endDate, Long idUsuario, int actualPage) {
         PageRequest pageRequest = PageRequest.of(actualPage, 10);
         Page<Registro> registrosPages = registroRepository.findLocalByFilters(startDate, endDate, idUsuario,
                 pageRequest);
 
         MaxMinDTO coordinatesBounds = registroRepository.findMaxRegistro(startDate, endDate, idUsuario);
-        List<RegisterDTO> registrosDto = registrosPages.stream()
-                .map(registro -> new RegisterDTO(
-                        registro.getDataHora(),
-                        registro.getLocal().getLatitude(),
-                        registro.getLocal().getLongitude(), 
-                        isStopped(startDate, endDate, idUsuario)))
-                .collect(Collectors.toList());
+        List<RegisterDTO> registersDTO = new ArrayList<>();
+        List<Registro> registros = registrosPages.getContent();
+        int sizeList = registrosPages.getSize();
 
+        registersDTO.add(new RegisterDTO(registros.get(0).getDataHora(), registros.get(0).getLocal().getLatitude(),
+                registros.get(0).getLocal().getLongitude(), false));
+
+        for (int i = 1; i < sizeList - 1; i++) {
+            boolean isStopped = true;
+
+            while (isStopped) {
+
+                Registro registroAnterior = registros.get(i - 1);
+                Registro registroAtual = registros.get(i);
+
+                if (registroAtual.getLocal().getId() == registroAnterior.getLocal().getId()) {
+                    long diffInMillis = Math
+                            .abs(registroAnterior.getDataHora().getSecond() - registroAtual.getDataHora().getSecond());
+                    long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+
+                    if (diffInMinutes >= 15) {
+                        isStopped = true;
+                        if(i < sizeList -1){
+                        i++;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+
+                    else {
+                        isStopped = false;
+                    }
+
+                } else {
+                    registersDTO.add(new RegisterDTO(registroAtual.getDataHora(),
+                            registroAtual.getLocal().getLatitude(), registroAtual.getLocal().getLongitude(), false));
+                    break;
+                }
+
+            }
+
+        }
         int totalPages = registrosPages.getTotalPages();
-        return new RegistersResponseDTO(registrosDto, actualPage, totalPages, coordinatesBounds);
+        return new RegistersResponseDTO(registersDTO, actualPage, totalPages, coordinatesBounds);
     }
 
 }
