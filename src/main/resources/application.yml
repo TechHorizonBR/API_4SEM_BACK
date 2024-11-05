@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localtracker_high?TNS_ADMIN=./wallet
+    username: ADMIN
+    password: Bigbang11559966!?
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect
+        spatial:
+          connection_finder: br.fatec.bd4.config.SpatialConnection
+
+  doc:
+    swagger-ui:
+      path: /docs-api.html
+    api-docs:
+      path: /docs-api
+    packagesToScan: br.fatec.bd4.web.controller
