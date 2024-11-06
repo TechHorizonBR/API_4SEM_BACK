@@ -1,21 +1,20 @@
 package br.fatec.bd4.service;
 
-import br.fatec.bd4.entity.Demarcacao;
-import br.fatec.bd4.entity.Device;
-import br.fatec.bd4.entity.Usuario;
-import br.fatec.bd4.repository.DemarcacaoRepository;
-import br.fatec.bd4.repository.UsuarioRepository;
-import br.fatec.bd4.service.interfaces.DemarcacaoService;
-import br.fatec.bd4.web.dto.DemarcacaoDTO;
-import lombok.AllArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
+import br.fatec.bd4.entity.Demarcacao;
+import br.fatec.bd4.repository.DemarcacaoRepository;
+import br.fatec.bd4.repository.UsuarioRepository;
+import br.fatec.bd4.service.interfaces.DemarcacaoService;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
@@ -54,5 +53,14 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
 //        demarc.setUsuario(user.get());
 
         return demarcacaoRepository.save(demarc);
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteById(Long id){
+        try{
+            demarcacaoRepository.deleteById(id);
+        }catch(Exception exception){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not exist.");
+        }
     }
 }
