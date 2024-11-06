@@ -1,8 +1,10 @@
 package br.fatec.bd4.service;
 
 import br.fatec.bd4.entity.Demarcacao;
+import br.fatec.bd4.entity.Device;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.DemarcacaoRepository;
+import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.service.interfaces.DemarcacaoService;
 import br.fatec.bd4.web.dto.DemarcacaoDTO;
 import lombok.AllArgsConstructor;
@@ -13,17 +15,20 @@ import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class DemarcacaoServiceImpl implements DemarcacaoService {
 
     @Autowired
     private final DemarcacaoRepository demarcacaoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     public Demarcacao saveDemarcacao() {
         Demarcacao demarc = new Demarcacao();
-        Usuario user = new Usuario();
+//        Optional<Usuario> user = usuarioRepository.findById(75L);
         GeometryFactory geometryFactory = new GeometryFactory();
 
         Coordinate[] coordinates = new Coordinate[]{
@@ -38,11 +43,15 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
 
         Polygon espacoGeometrico = geometryFactory.createPolygon(linearRing);
 
-        user.setId(74L);
 
-        demarc.setNome("Espaco teste");
-        demarc.setEspaco_geometrico(espacoGeometrico);
-        demarc.setUsuario(user);
+        // demarc.setId(1L);
+        if (espacoGeometrico.isValid()) {
+            demarc.setNome("Espaco teste");
+            demarc.setEspaco_geometrico(espacoGeometrico);
+        } else {
+            throw new IllegalArgumentException("Geometria inválida");
+        }
+//        demarc.setUsuario(user.get());
 
         return demarcacaoRepository.save(demarc);
     }

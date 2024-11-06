@@ -1,13 +1,15 @@
 package br.fatec.bd4.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Polygon;
 
-import lombok.Data;
-
-@Data
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Demarcacao {
 
     @Id
