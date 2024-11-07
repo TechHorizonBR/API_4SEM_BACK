@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 
 public record DemarcacaoDTO(
+        @JsonAlias("id") Long id,
         @JsonAlias("nome") String nome,
         @JsonAlias("coordenadas")List<List<Double>> coordinate
         ) {
