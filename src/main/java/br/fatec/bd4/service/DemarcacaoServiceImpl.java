@@ -90,8 +90,9 @@ public List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId) {
         
         // Criar o DTO
         DemarcacaoDTO dto = new DemarcacaoDTO(
-            demarcacao.getNome(),          // Nome da Demarcação
-            coordenadas                    // Coordenadas convertidas para List<List<Double>>
+            demarcacao.getId(),
+            demarcacao.getNome(),          
+            coordenadas                   
         );
     
         // Adicionar o DTO na lista

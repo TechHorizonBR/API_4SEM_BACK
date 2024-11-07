@@ -2,6 +2,8 @@ package br.fatec.bd4.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import br.fatec.bd4.web.dto.DemarcacaoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,12 +26,9 @@ public class Usuario {
     private String nome;
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
-    @JsonManagedReference
     private Device device;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")
-    @JsonManagedReference
-    @JsonIgnore
     private List<Registro> registros;
 
     public Usuario(String nome){
