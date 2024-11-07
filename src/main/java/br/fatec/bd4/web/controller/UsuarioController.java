@@ -31,10 +31,9 @@ public class UsuarioController {
 
     // Retorna um usuário específico pelo ID
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
+    public ResponseEntity<Optional<Usuario>> getUsuarioById(@PathVariable Long id) {
         Optional<Usuario> usuario = usuarioService.findById(id);
-        return usuario.map(ResponseEntity::ok)
-                      .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
     // Cria um novo usuário

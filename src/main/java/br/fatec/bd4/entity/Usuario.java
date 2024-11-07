@@ -1,5 +1,6 @@
 package br.fatec.bd4.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class Usuario {
     @Column(name = "nome", length = 200)
     private String nome;
 
-    @OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Device device;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")
