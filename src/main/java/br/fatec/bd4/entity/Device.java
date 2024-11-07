@@ -27,7 +27,6 @@ public class Device {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
-    @JsonBackReference
     private Usuario usuario;
 
     public Device(String codigo, String macAddress, Usuario usuario){

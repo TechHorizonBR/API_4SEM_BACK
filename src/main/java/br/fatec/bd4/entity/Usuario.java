@@ -23,11 +23,9 @@ public class Usuario {
     private String nome;
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
-    @JsonManagedReference
     private Device device;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")
-    @JsonManagedReference
     private List<Registro> registros;
 
     public Usuario(String nome){

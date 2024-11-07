@@ -15,6 +15,8 @@ import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,33 +28,38 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    public Demarcacao saveDemarcacao() {
-        Demarcacao demarc = new Demarcacao();
-//        Optional<Usuario> user = usuarioRepository.findById(75L);
-        GeometryFactory geometryFactory = new GeometryFactory();
+    public List<Demarcacao> saveDemarcacoes(String nome, Long usuarioId, List<List<List<Double>>> polygonsCoordinates) {
 
-        Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(50.0, 50.0),
-                new Coordinate(100.0, 50.0),
-                new Coordinate(100.0, 100.0),
-                new Coordinate(50.0, 100.0),
-                new Coordinate(50.0, 50.0)
-        };
-
-        LinearRing linearRing = geometryFactory.createLinearRing(coordinates);
-
-        Polygon espacoGeometrico = geometryFactory.createPolygon(linearRing);
-
-
-        // demarc.setId(1L);
-        if (espacoGeometrico.isValid()) {
-            demarc.setNome("Espaco teste");
-            demarc.setEspaco_geometrico(espacoGeometrico);
-        } else {
-            throw new IllegalArgumentException("Geometria inválida");
+        Optional<Usuario> optUsuario = usuarioRepository.findById(usuarioId);
+        if (optUsuario.isEmpty()) {
+            throw new IllegalArgumentException("Usuário inexistente");
         }
-//        demarc.setUsuario(user.get());
 
-        return demarcacaoRepository.save(demarc);
+        Usuario usuario = optUsuario.get();
+        GeometryFactory geometryFactory = new GeometryFactory();
+        List<Demarcacao> demarcacoes = new ArrayList<>();
+
+        for (List<List<Double>> coordinates : polygonsCoordinates) {
+            Coordinate[] coordinateArray = coordinates.stream()
+                    .map(coord -> new Coordinate(coord.get(0), coord.get(1)))
+                    .toArray(Coordinate[]::new);
+
+            LinearRing linearRing = geometryFactory.createLinearRing(coordinateArray);
+            Polygon espacoGeometrico = geometryFactory.createPolygon(linearRing);
+
+            if (!espacoGeometrico.isValid()) {
+                throw new IllegalArgumentException("Geometria inválida para um dos polígonos");
+            }
+
+            Demarcacao demarcacao = new Demarcacao();
+            demarcacao.setNome(nome);
+            demarcacao.setEspaco_geometrico(espacoGeometrico);
+            demarcacao.setUsuario(usuario);
+
+            demarcacoes.add(demarcacaoRepository.save(demarcacao));
+        }
+
+        return demarcacoes;
     }
+
 }
