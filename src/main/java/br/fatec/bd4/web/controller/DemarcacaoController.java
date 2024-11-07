@@ -13,12 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.fatec.bd4.entity.Demarcacao;
-import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.service.DemarcacaoServiceImpl;
-import br.fatec.bd4.service.UsuarioService;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import java.util.Optional;
+import br.fatec.bd4.web.dto.DemarcacaoDTO;
 
 @RestController
 @RequestMapping("/demarcacoes")
@@ -34,25 +30,11 @@ public class DemarcacaoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDemarcacao);
     }
 
-    // //Metodo de busca de demarcação por usuario
-    // @GetMapping("/user/{id}")
-    // public ResponseEntity<List<Demarcacao>> getDemarcacaoByUsuario(@PathVariable Long idUsuario) {
-    //     // Busca as demarcações associadas ao idUsuario
-    //     List<Demarcacao> demarcacoes = demarcacaoService.getDemarcacaoByUsuarioId(idUsuario);
-    
-    //     // Se não houver demarcações, retorna 404 Not Found
-    //     if (demarcacoes.isEmpty()) {
-    //         return ResponseEntity.notFound().build();
-    //     } else {
-    //         // Retorna 200 OK com a lista de demarcações
-    //         return ResponseEntity.ok(demarcacoes);
-    //     }
-    // }
-    
+    //Metodo de busca de demarcação por usuario    
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<Demarcacao>> getDemarcacaoByUsuario(@PathVariable Long id) {
+    public ResponseEntity<List<DemarcacaoDTO>> getDemarcacaoByUsuario(@PathVariable Long id) {
         // Busca as demarcações associadas ao idUsuario (agora id)
-        List<Demarcacao> demarcacoes = demarcacaoService.getDemarcacaoByUsuarioId(id);
+        List<DemarcacaoDTO> demarcacoes = demarcacaoService.getDemarcacaoByUsuarioId(id);
         
         // Se não houver demarcações, retorna 404 Not Found
         if (demarcacoes.isEmpty()) {

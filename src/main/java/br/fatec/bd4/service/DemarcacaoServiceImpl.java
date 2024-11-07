@@ -1,7 +1,9 @@
 package br.fatec.bd4.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -17,6 +19,7 @@ import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.DemarcacaoRepository;
 import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.service.interfaces.DemarcacaoService;
+import br.fatec.bd4.web.dto.DemarcacaoDTO;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -58,13 +61,45 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
         return demarcacaoRepository.save(demarc);
     }
 
-    @Override
-    public List<Demarcacao> getDemarcacaoByUsuarioId(Long usuarioId){
-        // Optional<Usuario> usuarioencontrado = usuarioRepository.findById(usuarioId);
-        // if(usuarioencontrado.isEmpty()){
-        //     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");        
-        // }
-        return demarcacaoRepository.findDemarcacaoByUsuarioId(usuarioId);
+ @Override
+public List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId) {
+    // Buscar as demarcações do usuário
+    List<Demarcacao> demarcacoes = demarcacaoRepository.findDemarcacaoByUsuarioId(usuarioId);
+    
+    // Lista para armazenar os DTOs
+    List<DemarcacaoDTO> demarcacaoDTOs = new ArrayList<>();
+    
+    // Iterar sobre as demarcações e converter para DTO
+    for (Demarcacao demarcacao : demarcacoes) {
+        
+        // Extrair o polígono (supondo que demarcacao.getEspaco_geometrico() retorne um objeto Polygon)
+        Polygon poligono = demarcacao.getEspaco_geometrico();
+        
+        // Converter as coordenadas do polígono para List<List<Double>>
+        List<List<Double>> coordenadas = new ArrayList<>();
+        
+        // Verifica se o polígono não é nulo e tem coordenadas
+        if (poligono != null && poligono.getCoordinates() != null) {
+            for (Coordinate coordenada : poligono.getCoordinates()) {
+                List<Double> ponto = new ArrayList<>();
+                ponto.add(coordenada.getX()); // Longitude (ou X)
+                ponto.add(coordenada.getY()); // Latitude (ou Y)
+                coordenadas.add(ponto);
+            }
+        }
+        
+        // Criar o DTO
+        DemarcacaoDTO dto = new DemarcacaoDTO(
+            demarcacao.getNome(),          // Nome da Demarcação
+            coordenadas                    // Coordenadas convertidas para List<List<Double>>
+        );
+    
+        // Adicionar o DTO na lista
+        demarcacaoDTOs.add(dto);
     }
+    
+    // Retornar a lista de DTOs
+    return demarcacaoDTOs;
+}
 
     }

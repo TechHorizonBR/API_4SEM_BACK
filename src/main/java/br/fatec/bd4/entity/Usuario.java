@@ -1,5 +1,6 @@
 package br.fatec.bd4.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class Usuario {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario")
     @JsonManagedReference
+    @JsonIgnore
     private List<Registro> registros;
 
     public Usuario(String nome){
