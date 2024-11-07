@@ -13,12 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.fatec.bd4.entity.Demarcacao;
-import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.service.DemarcacaoServiceImpl;
-import br.fatec.bd4.service.UsuarioService;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/demarcacoes")
