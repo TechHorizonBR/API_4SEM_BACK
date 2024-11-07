@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import br.fatec.bd4.entity.Demarcacao;
+import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.DemarcacaoRepository;
 import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.service.interfaces.DemarcacaoService;
@@ -69,4 +70,44 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not exist.");
         }
     }
+
+    @Transactional
+public Demarcacao updateDemarcacao(Long id, String nome, Long usuarioId, List<List<List<Double>>> polygonsCoordinates) {
+    
+    Optional<Usuario> optUsuario = usuarioRepository.findById(usuarioId);
+    if (optUsuario.isEmpty()) {
+        throw new IllegalArgumentException("Usuário inexistente");
+    }
+
+    Optional<Demarcacao> optDemarcacao = demarcacaoRepository.findById(id);
+    if (optDemarcacao.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Demarcação não encontrada");
+    }
+
+    Demarcacao demarcacao = optDemarcacao.get();
+    Usuario usuario = optUsuario.get();
+
+    demarcacao.setNome(nome);
+    demarcacao.setUsuario(usuario);
+
+    if (polygonsCoordinates != null && !polygonsCoordinates.isEmpty()) {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        for (List<List<Double>> coordinates : polygonsCoordinates) {
+            Coordinate[] coordinateArray = coordinates.stream()
+                    .map(coord -> new Coordinate(coord.get(0), coord.get(1)))
+                    .toArray(Coordinate[]::new);
+
+            LinearRing linearRing = geometryFactory.createLinearRing(coordinateArray);
+            Polygon espacoGeometrico = geometryFactory.createPolygon(linearRing);
+
+            if (!espacoGeometrico.isValid()) {
+                throw new IllegalArgumentException("Geometria inválida para um dos polígonos");
+            }
+
+            demarcacao.setEspaco_geometrico(espacoGeometrico);
+        }
+    }
+
+    return demarcacaoRepository.save(demarcacao);
+}
 }
