@@ -97,7 +97,6 @@ public List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId) {
             demarcacao.getNome(),          
             coordenadas                   
         );
-    
         demarcacaoDTOs.add(dto);
     }
     
