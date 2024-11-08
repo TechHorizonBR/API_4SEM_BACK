@@ -9,13 +9,12 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+
 import br.fatec.bd4.entity.Demarcacao;
-import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.DemarcacaoRepository;
 import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.service.interfaces.DemarcacaoService;
@@ -97,7 +96,6 @@ public List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId) {
             demarcacao.getNome(),          
             coordenadas                   
         );
-    
         demarcacaoDTOs.add(dto);
     }
     

@@ -4,9 +4,13 @@ import br.fatec.bd4.entity.Device;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.web.dto.UserInputDTO;
+import br.fatec.bd4.web.dto.UsuarioDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,17 +19,26 @@ import java.util.Optional;
 public class UsuarioService {
 
     @Autowired
-    private static UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
     
-        @Autowired
-        private DeviceService deviceService;
+    @Autowired
+    private DeviceService deviceService;
     
-        public List<Usuario> findAll() {
-            return usuarioRepository.findAll();
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+    
+    @Transactional(readOnly = true)
+    public UsuarioDTO findById(Long id) {
+
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if(usuario.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User doens't exist");
         }
-    
-        public static Optional<Usuario> findById(Long id) {
-            return usuarioRepository.findById(id);
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario.get().getId(), usuario.get().getNome());
+
+        return usuarioDTO;
     }
 
     @Transactional(readOnly = true)
