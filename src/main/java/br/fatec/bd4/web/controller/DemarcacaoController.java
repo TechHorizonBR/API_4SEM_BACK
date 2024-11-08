@@ -1,5 +1,6 @@
 package br.fatec.bd4.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -94,10 +95,10 @@ public class DemarcacaoController {
 
         // Se não houver demarcações, retorna 404 Not Found
         if (demarcacoes.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());  // Retorna 200 com lista vazia
         } else {
             // Retorna 200 OK com a lista de demarcações
             return ResponseEntity.ok(demarcacoes);
         }
-    }
+}
 }
