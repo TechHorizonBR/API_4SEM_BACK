@@ -6,10 +6,10 @@ import br.fatec.bd4.entity.Demarcacao;
 import br.fatec.bd4.web.dto.DemarcacaoDTO;
 
 public interface DemarcacaoService {
-//    DemarcacaoDTO saveDemarcacao(DemarcacaoDTO demarcacaoDTO);
-    Demarcacao saveDemarcacao();
-
     List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId);
+    List<Demarcacao> saveDemarcacoes(String nome, Long usuarioId, List<List<List<Double>>> polygonsCoordinates);
+    Demarcacao updateDemarcacao(Long id, String nome, Long usuarioId, List<List<List<Double>>> polygonsCoordinates);
+    void deleteById(Long id);
 }
 
 

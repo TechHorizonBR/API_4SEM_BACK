@@ -23,7 +23,6 @@ public class Registro {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id")
-    @JsonBackReference
     private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.EAGER)
