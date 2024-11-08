@@ -15,17 +15,17 @@ import java.util.Optional;
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private DeviceService deviceService;
-
-    public List<Usuario> findAll() {
-        return usuarioRepository.findAll();
-    }
-
-    public Optional<Usuario> findById(Long id) {
-        return usuarioRepository.findById(id);
+    private static UsuarioRepository usuarioRepository;
+    
+        @Autowired
+        private DeviceService deviceService;
+    
+        public List<Usuario> findAll() {
+            return usuarioRepository.findAll();
+        }
+    
+        public static Optional<Usuario> findById(Long id) {
+            return usuarioRepository.findById(id);
     }
 
     @Transactional(readOnly = true)

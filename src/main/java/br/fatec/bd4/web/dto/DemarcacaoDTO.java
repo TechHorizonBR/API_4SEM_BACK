@@ -1,14 +1,14 @@
 package br.fatec.bd4.web.dto;
 
-import br.fatec.bd4.entity.Usuario;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import org.locationtech.jts.geom.Coordinate;
-
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
+
+
 public record DemarcacaoDTO(
+        @JsonAlias("id") Long id,
         @JsonAlias("nome") String nome,
-        @JsonAlias("usuario") Usuario usuario,
-        @JsonAlias("coordenadas")Coordinate coordinate
+        @JsonAlias("coordenadas")List<List<Double>> coordinate
         ) {
 }

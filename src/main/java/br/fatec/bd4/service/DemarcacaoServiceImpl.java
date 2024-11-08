@@ -1,5 +1,9 @@
 package br.fatec.bd4.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
@@ -9,14 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
 import br.fatec.bd4.entity.Demarcacao;
 import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.repository.DemarcacaoRepository;
 import br.fatec.bd4.repository.UsuarioRepository;
 import br.fatec.bd4.service.interfaces.DemarcacaoService;
+import br.fatec.bd4.web.dto.DemarcacaoDTO;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -62,6 +65,45 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
         return demarcacoes;
     }
 
+ @Override
+public List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId) {
+    // Buscar as demarcações do usuário
+    List<Demarcacao> demarcacoes = demarcacaoRepository.findDemarcacaoByUsuarioId(usuarioId);
+    
+    // Lista para armazenar os DTOs
+    List<DemarcacaoDTO> demarcacaoDTOs = new ArrayList<>();
+    
+    // Iterar sobre as demarcações e converter para DTO
+    for (Demarcacao demarcacao : demarcacoes) {
+        
+        // Extrair o polígono (supondo que demarcacao.getEspaco_geometrico() retorne um objeto Polygon)
+        Polygon poligono = demarcacao.getEspaco_geometrico();
+        
+        // Converter as coordenadas do polígono para List<List<Double>>
+        List<List<Double>> coordenadas = new ArrayList<>();
+        
+        // Verifica se o polígono não é nulo e tem coordenadas
+        if (poligono != null && poligono.getCoordinates() != null) {
+            for (Coordinate coordenada : poligono.getCoordinates()) {
+                List<Double> ponto = new ArrayList<>();
+                ponto.add(coordenada.getX()); // Longitude (ou X)
+                ponto.add(coordenada.getY()); // Latitude (ou Y)
+                coordenadas.add(ponto);
+            }
+        }
+        
+        DemarcacaoDTO dto = new DemarcacaoDTO(
+            demarcacao.getId(),
+            demarcacao.getNome(),          
+            coordenadas                   
+        );
+    
+        demarcacaoDTOs.add(dto);
+    }
+    
+    return demarcacaoDTOs;
+}
+
     @Transactional(readOnly = false)
     public void deleteById(Long id){
         try{
@@ -72,7 +114,7 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
     }
 
     @Transactional
-public Demarcacao updateDemarcacao(Long id, String nome, Long usuarioId, List<List<List<Double>>> polygonsCoordinates) {
+    public Demarcacao updateDemarcacao(Long id, String nome, Long usuarioId, List<List<List<Double>>> polygonsCoordinates) {
     
     Optional<Usuario> optUsuario = usuarioRepository.findById(usuarioId);
     if (optUsuario.isEmpty()) {
