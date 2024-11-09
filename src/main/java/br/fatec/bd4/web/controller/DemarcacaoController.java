@@ -1,5 +1,6 @@
 package br.fatec.bd4.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.fatec.bd4.entity.Demarcacao;
+import br.fatec.bd4.entity.Device;
 import br.fatec.bd4.service.DemarcacaoServiceImpl;
 import br.fatec.bd4.web.dto.DemarcacaoDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
 @RequestMapping("/demarcacoes")
@@ -28,6 +34,20 @@ public class DemarcacaoController {
     @Autowired
     private DemarcacaoServiceImpl demarcacaoService;
 
+
+    //Cria uma nova demarcação
+    @Operation(
+            summary = "Create a new Demarcation.",
+            description = "Endpoint responsible for creating a new Demarcation.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Demarcation have been created..",
+                            content = @Content(mediaType = "application/json", schema = @Schema(
+                                implementation = Demarcacao.class))
+                    )
+            }
+    )
     @PostMapping
     public ResponseEntity<List<Demarcacao>> createDemarcacoes(@RequestBody Map<String, Object> requestData) {
         try {
@@ -52,12 +72,39 @@ public class DemarcacaoController {
         }
     }
 
+    //Deletar demarcações
+
+    @Operation(
+        summary = "Delete a Demarcation.",
+        description = "Endpoint responsible for deleting a demarcation by its ID.",
+        responses = {
+                @ApiResponse(
+                        responseCode = "204",
+                        description = "Demarcation deleted successfully. No content returned."
+                )
+        }
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         demarcacaoService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
+
+    //Atualizar Demarcações
+
+    @Operation(
+        summary = "Update an existing Demarcation.",
+        description = "Endpoint responsible for updating an existing deamrcation  by its ID.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Deamrcation have been updated..",
+                    content = @Content(mediaType = "application/json", schema = @Schema(
+                        implementation = Demarcacao.class))
+            )
+            }
+    )
     @PatchMapping("/{id}")
     public ResponseEntity<Demarcacao> updateDemarcacao(@PathVariable Long id,
             @RequestBody Map<String, Object> requestData) {
@@ -86,7 +133,20 @@ public class DemarcacaoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
+    
+    //retorna as demarcações
+    @Operation(
+        summary = "Get all Delimitations by id.",
+        description = "Endpoint responsible for retrieving a list of all delimitations by usuarioID.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Getting has been executed successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(
+                        implementation = Demarcacao.class))
+                    )
+            }
+        )
     @GetMapping("/user/{id}")
     public ResponseEntity<List<DemarcacaoDTO>> getDemarcacaoByUsuario(@PathVariable Long id) {
         // Busca as demarcações associadas ao idUsuario (agora id)
@@ -94,10 +154,10 @@ public class DemarcacaoController {
 
         // Se não houver demarcações, retorna 404 Not Found
         if (demarcacoes.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());  // Retorna 200 com lista vazia
         } else {
             // Retorna 200 OK com a lista de demarcações
             return ResponseEntity.ok(demarcacoes);
         }
-    }
+}
 }

@@ -19,6 +19,7 @@ import br.fatec.bd4.service.UsuarioService;
 import br.fatec.bd4.web.dto.UserInputDTO;
 import br.fatec.bd4.web.dto.UsuarioDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,6 +32,10 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     // Retorna todos os usuários
+    @Operation(summary = "Return all users")
+    @ApiResponse(responseCode = "200", description = "Users Found", 
+    content = @Content(mediaType = "application/json", 
+    schema = @Schema(implementation = Usuario.class)))
     @GetMapping
     public ResponseEntity<List<Usuario>> getAllUsuarios() {
         List<Usuario> usuarios = usuarioService.findAll();
@@ -38,6 +43,12 @@ public class UsuarioController {
     }
 
     // Retorna um usuário específico pelo ID
+    @Operation(summary = "Return an especific user by ID")
+    @Parameter(name = "id", description = "ID do usuário", required = true)
+    @ApiResponse(responseCode = "200", description = "Usuário encontrado", 
+    content = @Content(mediaType = "application/json", 
+                                    schema = @Schema(implementation = Usuario.class)))
+    @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
         UsuarioDTO usuario = usuarioService.findById(id);
@@ -45,6 +56,11 @@ public class UsuarioController {
     }
 
     // Cria um novo usuário
+    @Operation(summary = "Create a new user")
+    @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso", 
+    content = @Content(mediaType = "application/json", 
+                                    schema = @Schema(implementation = Usuario.class)))
+    @ApiResponse(responseCode = "400", description = "Requisição inválida")
     @PostMapping
     public ResponseEntity<Usuario> createUsuario(@RequestBody Usuario usuario) {
         Usuario savedUsuario = usuarioService.save(usuario);
@@ -52,6 +68,12 @@ public class UsuarioController {
     }
 
     // Atualiza um usuário existente
+    @Operation(summary = "Update an existent user")
+    @Parameter(name = "id", description = "ID do usuário a ser atualizado", required = true)
+    @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso", 
+    content = @Content(mediaType = "application/json", 
+                                    schema = @Schema(implementation = Usuario.class)))
+    @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
         Usuario updatedUsuario = usuarioService.update(id, usuarioDetails);
@@ -59,6 +81,10 @@ public class UsuarioController {
     }
 
     // Exclui um usuário pelo ID
+    @Operation(summary = "Delete an user by id")
+    @Parameter(name = "id", description = "ID do usuário a ser excluído", required = true)
+    @ApiResponse(responseCode = "204", description = "Usuário excluído com sucesso")
+    @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         usuarioService.deleteById(id);
