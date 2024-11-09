@@ -16,6 +16,13 @@ Clone usando o comando no terminal da sua IDE;
 git clone https://github.com/TechHorizonBR/API_4SEM_BACK.git
 ```
 
+## Spring Boot 🍃
+
+Iniciando a aplicação Spring Boot;
+```
+mvn spring-boot:run
+```
+
 ## Acessando a Aplicação 🌐
 
 Em seu navegador acesse o endereço após rodar a aplicação;
