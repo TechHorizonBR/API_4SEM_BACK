@@ -26,10 +26,38 @@ public class RegistroController {
     @Autowired
     private RegistroService registroService;
 
+    //Retona todos os registros
+    @Operation(
+        summary = "Get all Registers.",
+        description = "Endpoint responsible for retrieving a list of all registers.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Getting has been executed successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(
+                        implementation = Registro.class))
+                    )
+            }
+    )
+
     @GetMapping
     public List<Registro> getAllRegistros() {
         return registroService.findAll();
     }
+    //Retorna registro pelo ID
+
+    @Operation(
+            summary = "Get the register.",
+            description = "Endpoint responsible for getting register information searching for id.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Getting has been executed successfully.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(
+                                implementation = Registro.class))
+                    )
+            }
+    )
 
     @GetMapping("/{id}")
     public ResponseEntity<Registro> getRegistroById(@PathVariable Long id) {
@@ -38,6 +66,21 @@ public class RegistroController {
                        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
+    //Cria registro 
+
+    @Operation(
+            summary = "Create a new Register.",
+            description = "Endpoint responsible for creating a new device, receiving a list of UserDeviceDataDTO to input the data.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Register have been created..",
+                            content = @Content(mediaType = "application/json", schema = @Schema(
+                                implementation = Registro.class))
+                    )
+            }
+    )
     @PostMapping
     public ResponseEntity<Registro> createRegistro(@RequestBody Registro registro) {
         Registro savedRegistro = registroService.save(registro);
@@ -45,6 +88,19 @@ public class RegistroController {
     }
 
 
+
+    //Deleta um registro
+
+    @Operation(
+        summary = "Delete a Register.",
+        description = "Endpoint responsible for deleting a registe by its ID.",
+        responses = {
+                @ApiResponse(
+                        responseCode = "204",
+                        description = "Register deleted successfully. No content returned."
+                )
+        }
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRegistro(@PathVariable Long id) {
         registroService.deleteById(id);
@@ -68,6 +124,7 @@ public class RegistroController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    
     @PostMapping("/input-registers-upload-file")
     public ResponseEntity<Void> inputRegistersByUpload(@RequestParam("file") MultipartFile file){
         registroService.inputRegistersByUploadFile(file);
