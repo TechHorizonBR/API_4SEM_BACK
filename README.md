@@ -51,5 +51,7 @@ localhost:8080/
 <details>
 
 <summary>Sprint 3</summary>
-     
+
+![image](https://github.com/user-attachments/assets/ec7a8101-9cad-489f-bf8c-a1d3d0ed64a8)
+
 </details>
