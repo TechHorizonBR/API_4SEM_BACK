@@ -65,90 +65,83 @@ public class DemarcacaoServiceImpl implements DemarcacaoService {
         return demarcacoes;
     }
 
- @Override
-public List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId) {
-    // Buscar as demarcações do usuário
-    List<Demarcacao> demarcacoes = demarcacaoRepository.findDemarcacaoByUsuarioId(usuarioId);
-    
-    // Lista para armazenar os DTOs
-    List<DemarcacaoDTO> demarcacaoDTOs = new ArrayList<>();
-    
-    // Iterar sobre as demarcações e converter para DTO
-    for (Demarcacao demarcacao : demarcacoes) {
-        
-        // Extrair o polígono (supondo que demarcacao.getEspaco_geometrico() retorne um objeto Polygon)
-        Polygon poligono = demarcacao.getEspaco_geometrico();
-        
-        // Converter as coordenadas do polígono para List<List<Double>>
-        List<List<Double>> coordenadas = new ArrayList<>();
-        
-        // Verifica se o polígono não é nulo e tem coordenadas
-        if (poligono != null && poligono.getCoordinates() != null) {
-            for (Coordinate coordenada : poligono.getCoordinates()) {
-                List<Double> ponto = new ArrayList<>();
-                ponto.add(coordenada.getX()); // Longitude (ou X)
-                ponto.add(coordenada.getY()); // Latitude (ou Y)
-                coordenadas.add(ponto);
+    @Override
+    public List<DemarcacaoDTO> getDemarcacaoByUsuarioId(Long usuarioId) {
+        List<Demarcacao> demarcacoes = demarcacaoRepository.findDemarcacaoByUsuarioId(usuarioId);
+
+        List<DemarcacaoDTO> demarcacaoDTOs = new ArrayList<>();
+
+        for (Demarcacao demarcacao : demarcacoes) {
+            Polygon poligono = demarcacao.getEspaco_geometrico();
+
+            List<List<Double>> coordenadas = new ArrayList<>();
+
+            if (poligono != null && poligono.getCoordinates() != null) {
+                for (Coordinate coordenada : poligono.getCoordinates()) {
+                    List<Double> ponto = new ArrayList<>();
+                    ponto.add(coordenada.getX());
+                    ponto.add(coordenada.getY());
+                    coordenadas.add(ponto);
+                }
             }
+
+            DemarcacaoDTO dto = new DemarcacaoDTO(
+                    demarcacao.getId(),
+                    demarcacao.getNome(),
+                    coordenadas);
+            demarcacaoDTOs.add(dto);
         }
-        
-        DemarcacaoDTO dto = new DemarcacaoDTO(
-            demarcacao.getId(),
-            demarcacao.getNome(),          
-            coordenadas                   
-        );
-        demarcacaoDTOs.add(dto);
+
+        return demarcacaoDTOs;
     }
-    
-    return demarcacaoDTOs;
-}
 
     @Transactional(readOnly = false)
-    public void deleteById(Long id){
-        try{
+    public void deleteById(Long id) {
+        try {
             demarcacaoRepository.deleteById(id);
-        }catch(Exception exception){
+        } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not exist.");
         }
     }
 
     @Transactional
-    public Demarcacao updateDemarcacao(Long id, String nome, Long usuarioId, List<List<List<Double>>> polygonsCoordinates) {
-    
-    Optional<Usuario> optUsuario = usuarioRepository.findById(usuarioId);
-    if (optUsuario.isEmpty()) {
-        throw new IllegalArgumentException("Usuário inexistente");
-    }
+    public Demarcacao updateDemarcacao(Long id, String nome, Long usuarioId,
+            List<List<List<Double>>> polygonsCoordinates) {
 
-    Optional<Demarcacao> optDemarcacao = demarcacaoRepository.findById(id);
-    if (optDemarcacao.isEmpty()) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Demarcação não encontrada");
-    }
-
-    Demarcacao demarcacao = optDemarcacao.get();
-    Usuario usuario = optUsuario.get();
-
-    demarcacao.setNome(nome);
-    demarcacao.setUsuario(usuario);
-
-    if (polygonsCoordinates != null && !polygonsCoordinates.isEmpty()) {
-        GeometryFactory geometryFactory = new GeometryFactory();
-        for (List<List<Double>> coordinates : polygonsCoordinates) {
-            Coordinate[] coordinateArray = coordinates.stream()
-                    .map(coord -> new Coordinate(coord.get(0), coord.get(1)))
-                    .toArray(Coordinate[]::new);
-
-            LinearRing linearRing = geometryFactory.createLinearRing(coordinateArray);
-            Polygon espacoGeometrico = geometryFactory.createPolygon(linearRing);
-
-            if (!espacoGeometrico.isValid()) {
-                throw new IllegalArgumentException("Geometria inválida para um dos polígonos");
-            }
-
-            demarcacao.setEspaco_geometrico(espacoGeometrico);
+        Optional<Usuario> optUsuario = usuarioRepository.findById(usuarioId);
+        if (optUsuario.isEmpty()) {
+            throw new IllegalArgumentException("Usuário inexistente");
         }
-    }
 
-    return demarcacaoRepository.save(demarcacao);
-}
+        Optional<Demarcacao> optDemarcacao = demarcacaoRepository.findById(id);
+        if (optDemarcacao.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Demarcação não encontrada");
+        }
+
+        Demarcacao demarcacao = optDemarcacao.get();
+        Usuario usuario = optUsuario.get();
+
+        demarcacao.setNome(nome);
+        demarcacao.setUsuario(usuario);
+
+        if (polygonsCoordinates != null && !polygonsCoordinates.isEmpty()) {
+            GeometryFactory geometryFactory = new GeometryFactory();
+            for (List<List<Double>> coordinates : polygonsCoordinates) {
+                Coordinate[] coordinateArray = coordinates.stream()
+                        .map(coord -> new Coordinate(coord.get(0), coord.get(1)))
+                        .toArray(Coordinate[]::new);
+
+                LinearRing linearRing = geometryFactory.createLinearRing(coordinateArray);
+                Polygon espacoGeometrico = geometryFactory.createPolygon(linearRing);
+
+                if (!espacoGeometrico.isValid()) {
+                    throw new IllegalArgumentException("Geometria inválida para um dos polígonos");
+                }
+
+                demarcacao.setEspaco_geometrico(espacoGeometrico);
+            }
+        }
+
+        return demarcacaoRepository.save(demarcacao);
+    }
 }

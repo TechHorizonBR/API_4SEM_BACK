@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.fatec.bd4.entity.Demarcacao;
-import br.fatec.bd4.entity.Device;
 import br.fatec.bd4.service.DemarcacaoServiceImpl;
 import br.fatec.bd4.web.dto.DemarcacaoDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,8 +33,6 @@ public class DemarcacaoController {
     @Autowired
     private DemarcacaoServiceImpl demarcacaoService;
 
-
-    //Cria uma nova demarcação
     @Operation(
             summary = "Create a new Demarcation.",
             description = "Endpoint responsible for creating a new Demarcation.",
@@ -72,8 +69,6 @@ public class DemarcacaoController {
         }
     }
 
-    //Deletar demarcações
-
     @Operation(
         summary = "Delete a Demarcation.",
         description = "Endpoint responsible for deleting a demarcation by its ID.",
@@ -89,9 +84,6 @@ public class DemarcacaoController {
         demarcacaoService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-
-    //Atualizar Demarcações
 
     @Operation(
         summary = "Update an existing Demarcation.",
@@ -134,7 +126,6 @@ public class DemarcacaoController {
         }
     }
     
-    //retorna as demarcações
     @Operation(
         summary = "Get all Delimitations by id.",
         description = "Endpoint responsible for retrieving a list of all delimitations by usuarioID.",
@@ -149,14 +140,10 @@ public class DemarcacaoController {
         )
     @GetMapping("/user/{id}")
     public ResponseEntity<List<DemarcacaoDTO>> getDemarcacaoByUsuario(@PathVariable Long id) {
-        // Busca as demarcações associadas ao idUsuario (agora id)
         List<DemarcacaoDTO> demarcacoes = demarcacaoService.getDemarcacaoByUsuarioId(id);
-
-        // Se não houver demarcações, retorna 404 Not Found
         if (demarcacoes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());  // Retorna 200 com lista vazia
+            return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
         } else {
-            // Retorna 200 OK com a lista de demarcações
             return ResponseEntity.ok(demarcacoes);
         }
 }

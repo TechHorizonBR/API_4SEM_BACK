@@ -21,7 +21,6 @@ public class DeviceController {
     @Autowired
     private DeviceService deviceService;
 
-    // Retorna todos os dispositivos
     @Operation(
         summary = "Get all Devices.",
         description = "Endpoint responsible for retrieving a list of all devices.",
@@ -40,7 +39,6 @@ public class DeviceController {
         return ResponseEntity.ok(devices);
     }
 
-    // Retorna um dispositivo específico pelo ID
     @Operation(
             summary = "Get the Device.",
             description = "Endpoint responsible for getting device information searching for id.",
@@ -60,7 +58,6 @@ public class DeviceController {
                      .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Cria um novo dispositivo
     @Operation(
             summary = "Create a new Device.",
             description = "Endpoint responsible for creating a new device, receiving a list of UserDeviceDataDTO to input the data.",
@@ -79,7 +76,6 @@ public class DeviceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDevice);
     }
 
-    // Atualiza um dispositivo existente
     @Operation(
         summary = "Update an existing Device.",
         description = "Endpoint responsible for updating an existing device by its ID.",
@@ -98,7 +94,6 @@ public class DeviceController {
         return ResponseEntity.ok(updatedDevice);
     }
 
-    // Exclui um dispositivo pelo ID
     @Operation(
         summary = "Delete a Device.",
         description = "Endpoint responsible for deleting a device by its ID.",

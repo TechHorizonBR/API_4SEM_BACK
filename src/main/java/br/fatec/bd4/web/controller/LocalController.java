@@ -22,7 +22,6 @@ public class LocalController {
     @Autowired
     private LocalService localService;
 
-    // Retorna todos os locais
     @Operation(
         summary = "Get all Locals.",
         description = "Endpoint responsible for retrieving a list of all locals.",
@@ -41,10 +40,9 @@ public class LocalController {
         return ResponseEntity.ok(locais);
     }
 
-    // Retorna um local específico pelo ID
     @Operation(
         summary = "Get all Locals .",
-        description = "Endpoint responsible for getting local information searhing for id.",
+        description = "Endpoint responsible for getting local information searching for id.",
         responses = {
             @ApiResponse(
                     responseCode = "200",
@@ -61,7 +59,6 @@ public class LocalController {
                     .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Cria um novo local
     @Operation(
         summary = "Create a new Local.",
         description = "Endpoint responsible for creating a new local",
@@ -80,7 +77,6 @@ public class LocalController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLocal);
     }
 
-    // Atualiza um local existente
     @Operation(
         summary = "Update an existing Local.",
         description = "Endpoint responsible for updating an existing local by its ID.",
@@ -99,7 +95,6 @@ public class LocalController {
         return ResponseEntity.ok(updatedLocal);
     }
 
-    // Exclui um local pelo ID
     @Operation(
         summary = "Delete a Local.",
         description = "Endpoint responsible for deleting a Local by its ID.",

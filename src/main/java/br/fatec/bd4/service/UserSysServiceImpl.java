@@ -4,14 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.fatec.bd4.entity.UserSys;
-import br.fatec.bd4.entity.Usuario;
 import br.fatec.bd4.entity.Enum.Role;
 import br.fatec.bd4.repository.UserSysRepository;
 import br.fatec.bd4.service.interfaces.UserSysService;

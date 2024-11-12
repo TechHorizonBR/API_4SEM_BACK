@@ -26,7 +26,6 @@ public class RegistroController {
     @Autowired
     private RegistroService registroService;
 
-    //Retona todos os registros
     @Operation(
         summary = "Get all Registers.",
         description = "Endpoint responsible for retrieving a list of all registers.",
@@ -44,7 +43,6 @@ public class RegistroController {
     public List<Registro> getAllRegistros() {
         return registroService.findAll();
     }
-    //Retorna registro pelo ID
 
     @Operation(
             summary = "Get the register.",
@@ -66,9 +64,6 @@ public class RegistroController {
                        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
-    //Cria registro 
-
     @Operation(
             summary = "Create a new Register.",
             description = "Endpoint responsible for creating a new device, receiving a list of UserDeviceDataDTO to input the data.",
@@ -86,10 +81,6 @@ public class RegistroController {
         Registro savedRegistro = registroService.save(registro);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRegistro);
     }
-
-
-
-    //Deleta um registro
 
     @Operation(
         summary = "Delete a Register.",
@@ -147,16 +138,13 @@ public class RegistroController {
     )
     @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}/{actualPage}")
     public ResponseEntity<RegistersResponseDTO> findLocalByFilters(
-        @PathVariable String startDate,
-        @PathVariable String endDate,
-        @PathVariable Long idUsuario,
-        @PathVariable int actualPage
-    )
-    {
+                                                                    @PathVariable String startDate,
+                                                                    @PathVariable String endDate,
+                                                                    @PathVariable Long idUsuario,
+                                                                    @PathVariable int actualPage
+                                                                ){
         RegistersResponseDTO response = registroService.findLocalByFilters(startDate, endDate, idUsuario, actualPage);
-                    
-    
         return ResponseEntity.ok(response);
     }
-    }
+}
 

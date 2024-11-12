@@ -1,7 +1,6 @@
 package br.fatec.bd4.entity;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import br.fatec.bd4.entity.Enum.Role;
 import jakarta.persistence.Column;

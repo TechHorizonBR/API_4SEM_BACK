@@ -31,23 +31,17 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Retorna todos os usuários
     @Operation(summary = "Return all users")
-    @ApiResponse(responseCode = "200", description = "Users Found", 
-    content = @Content(mediaType = "application/json", 
-    schema = @Schema(implementation = Usuario.class)))
+    @ApiResponse(responseCode = "200", description = "Users Found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class)))
     @GetMapping
     public ResponseEntity<List<Usuario>> getAllUsuarios() {
         List<Usuario> usuarios = usuarioService.findAll();
         return ResponseEntity.ok(usuarios);
     }
 
-    // Retorna um usuário específico pelo ID
     @Operation(summary = "Return an especific user by ID")
     @Parameter(name = "id", description = "ID do usuário", required = true)
-    @ApiResponse(responseCode = "200", description = "Usuário encontrado", 
-    content = @Content(mediaType = "application/json", 
-                                    schema = @Schema(implementation = Usuario.class)))
+    @ApiResponse(responseCode = "200", description = "Usuário encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class)))
     @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
@@ -55,11 +49,8 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
-    // Cria um novo usuário
     @Operation(summary = "Create a new user")
-    @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso", 
-    content = @Content(mediaType = "application/json", 
-                                    schema = @Schema(implementation = Usuario.class)))
+    @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class)))
     @ApiResponse(responseCode = "400", description = "Requisição inválida")
     @PostMapping
     public ResponseEntity<Usuario> createUsuario(@RequestBody Usuario usuario) {
@@ -67,12 +58,9 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUsuario);
     }
 
-    // Atualiza um usuário existente
     @Operation(summary = "Update an existent user")
     @Parameter(name = "id", description = "ID do usuário a ser atualizado", required = true)
-    @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso", 
-    content = @Content(mediaType = "application/json", 
-                                    schema = @Schema(implementation = Usuario.class)))
+    @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class)))
     @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
@@ -80,7 +68,6 @@ public class UsuarioController {
         return ResponseEntity.ok(updatedUsuario);
     }
 
-    // Exclui um usuário pelo ID
     @Operation(summary = "Delete an user by id")
     @Parameter(name = "id", description = "ID do usuário a ser excluído", required = true)
     @ApiResponse(responseCode = "204", description = "Usuário excluído com sucesso")
@@ -91,19 +78,11 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(
-            summary = "Endpoint responsible for putting new user into application.",
-            description = "Endpoint responsible for putting new user into application, receiving a list of UserInputDTO to input the data.",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Users have been created.",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))
-                    )
-            }
-    )
+    @Operation(summary = "Endpoint responsible for putting new user into application.", description = "Endpoint responsible for putting new user into application, receiving a list of UserInputDTO to input the data.", responses = {
+            @ApiResponse(responseCode = "201", description = "Users have been created.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class)))
+    })
     @PostMapping("/input-users")
-    public ResponseEntity<Void> inputUsers(@RequestBody List<UserInputDTO> users){
+    public ResponseEntity<Void> inputUsers(@RequestBody List<UserInputDTO> users) {
         usuarioService.inputUsers(users);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
