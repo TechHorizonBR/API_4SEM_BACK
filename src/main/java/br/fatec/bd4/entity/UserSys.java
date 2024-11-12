@@ -3,6 +3,7 @@ package br.fatec.bd4.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
+import br.fatec.bd4.entity.Enum.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,28 +39,5 @@ public class UserSys implements Serializable{
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false, length = 25)
     private Role role = Role.ROLE_CLIENTE;
-
-    public enum Role {
-        ROLE_ADMIN, ROLE_CLIENTE
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(this == obj) return true;
-        if(obj == null || getClass() != obj.getClass()) return false;
-        UserSys user = (UserSys) obj;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Usuario{" +
-                "id=" + id +
-                '}';
-    }    
+ 
 }

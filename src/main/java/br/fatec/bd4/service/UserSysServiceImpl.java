@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.fatec.bd4.entity.UserSys;
+import br.fatec.bd4.entity.Usuario;
+import br.fatec.bd4.entity.Enum.Role;
 import br.fatec.bd4.repository.UserSysRepository;
 import br.fatec.bd4.service.interfaces.UserSysService;
 import lombok.RequiredArgsConstructor;
@@ -17,17 +21,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserSysServiceImpl implements UserSysService{ 
     private final UserSysRepository userSysRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = false)
     public UserSys create(UserSys user) {
-        if(user.getName().equals("") ||
-            user.getPassword().equals("") ||
+        if(user.getName().trim().isBlank() ||
+            user.getPassword().trim().isBlank() ||
             user.getRole() == null ||
-            user.getUsername().equals(""))
+            user.getUsername().trim().isBlank())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "All fields are required");
 
-        return userSysRepository.save(user);
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return userSysRepository.save(user);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Username '%s' já cadastrado", user.getUsername()));
+        }
     }
 
     @Override
@@ -67,6 +77,10 @@ public class UserSysServiceImpl implements UserSysService{
     public UserSys update(UserSys user) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
+    }
+    @Transactional(readOnly = true)
+    public Role buscarRolePorUsername(String username) {
+        return userSysRepository.findRoleByUsername(username);
     }
 
     @Override

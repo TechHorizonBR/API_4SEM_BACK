@@ -6,12 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.fatec.bd4.entity.UserSys;
 import br.fatec.bd4.service.UserSysServiceImpl;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import br.fatec.bd4.web.dto.UserSysCreate;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,7 +29,12 @@ public class UserSysController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserSys> create(@RequestBody UserSys user){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userSysServiceImpl.create(user));
+    public ResponseEntity<UserSys> create(@RequestBody UserSysCreate user){
+        return ResponseEntity.status(HttpStatus.CREATED).body(userSysServiceImpl.create(user.toUserSys(user)));
+    }
+
+    @GetMapping("/username")
+    public ResponseEntity<UserSys> getByUsername(@RequestParam String username){
+        return ResponseEntity.ok().body(userSysServiceImpl.findByUsername(username));
     }
 }
