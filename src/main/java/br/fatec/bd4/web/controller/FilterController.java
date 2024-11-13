@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class FilterController {
                                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDeviceDataDTO.class)))
             }
     )
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
     public ResponseEntity<List<UserDeviceDataDTO>> getUsersDevices() {
         return ResponseEntity.status(HttpStatus.OK).body(filterService.getUsersDevice());
     }

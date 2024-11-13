@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,7 @@ public class DemarcacaoController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
     @PostMapping
     public ResponseEntity<List<Demarcacao>> createDemarcacoes(@RequestBody Map<String, Object> requestData) {
         try {
@@ -79,53 +81,12 @@ public class DemarcacaoController {
                 )
         }
     )
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         demarcacaoService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-    @Operation(
-        summary = "Update an existing Demarcation.",
-        description = "Endpoint responsible for updating an existing deamrcation  by its ID.",
-        responses = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Deamrcation have been updated..",
-                    content = @Content(mediaType = "application/json", schema = @Schema(
-                        implementation = Demarcacao.class))
-            )
-            }
-    )
-    @PatchMapping("/{id}")
-    public ResponseEntity<Demarcacao> updateDemarcacao(@PathVariable Long id,
-            @RequestBody Map<String, Object> requestData) {
-        try {
-            if (!requestData.containsKey("nome") || !requestData.containsKey("usuarioId")
-                    || !requestData.containsKey("coordinates")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
-
-            String nome = (String) requestData.get("nome");
-            Long usuarioId = ((Number) requestData.get("usuarioId")).longValue();
-            List<List<List<Double>>> polygonsCoordinates = (List<List<List<Double>>>) requestData.get("coordinates");
-
-            if (polygonsCoordinates.isEmpty() || polygonsCoordinates.stream().anyMatch(coords -> coords.size() < 4)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
-
-            Demarcacao updatedDemarcacao = demarcacaoService.updateDemarcacao(id, nome, usuarioId, polygonsCoordinates);
-
-            if (updatedDemarcacao == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            return ResponseEntity.ok(updatedDemarcacao);
-        } catch (ClassCastException | NullPointerException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
-    
     @Operation(
         summary = "Get all Delimitations by id.",
         description = "Endpoint responsible for retrieving a list of all delimitations by usuarioID.",
@@ -139,6 +100,7 @@ public class DemarcacaoController {
             }
         )
     @GetMapping("/user/{id}")
+    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
     public ResponseEntity<List<DemarcacaoDTO>> getDemarcacaoByUsuario(@PathVariable Long id) {
         List<DemarcacaoDTO> demarcacoes = demarcacaoService.getDemarcacaoByUsuarioId(id);
         if (demarcacoes.isEmpty()) {

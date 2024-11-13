@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class LocalController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Local>> getAllLocais() {
         List<Local> locais = localService.findAll();
@@ -52,6 +54,7 @@ public class LocalController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Local> getLocalById(@PathVariable Long id) {
         Optional<Local> local = localService.findById(id);
@@ -71,6 +74,7 @@ public class LocalController {
                 )
         }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Local> createLocal(@RequestBody Local local) {
         Local savedLocal = localService.save(local);
@@ -89,6 +93,7 @@ public class LocalController {
             )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Local> updateLocal(@PathVariable Long id, @RequestBody Local localDetails) {
         Local updatedLocal = localService.update(id, localDetails);
@@ -105,6 +110,7 @@ public class LocalController {
                 )
         }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocal(@PathVariable Long id) {
         localService.deleteById(id);

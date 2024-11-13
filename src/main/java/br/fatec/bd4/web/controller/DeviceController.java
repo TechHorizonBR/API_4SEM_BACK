@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,8 @@ public class DeviceController {
                         implementation = Device.class))
                     )
             }
-        )        
+        )
+    @PreAuthorize("hasRole('ADMIN')")        
     @GetMapping
     public ResponseEntity<List<Device>> getAllDevices() {
         List<Device> devices = deviceService.findAll();
@@ -51,6 +53,7 @@ public class DeviceController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Device> getDeviceById(@PathVariable Long id) {
         Optional<Device> device = deviceService.findById(id);
@@ -70,6 +73,7 @@ public class DeviceController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Device> createDevice(@RequestBody Device device) {
         Device savedDevice = deviceService.save(device);
@@ -86,8 +90,9 @@ public class DeviceController {
                     content = @Content(mediaType = "application/json", schema = @Schema(
                         implementation = Device.class))
             )
-            }
-        )
+        }
+    )
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Device> updateDevice(@PathVariable Long id, @RequestBody Device deviceDetails) {
         Device updatedDevice = deviceService.update(id, deviceDetails);
@@ -104,6 +109,7 @@ public class DeviceController {
                 )
         }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
         deviceService.deleteById(id);
