@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +39,7 @@ public class RegistroController {
                     )
             }
     )
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<Registro> getAllRegistros() {
         return registroService.findAll();
@@ -56,7 +57,7 @@ public class RegistroController {
                     )
             }
     )
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Registro> getRegistroById(@PathVariable Long id) {
         Optional<Registro> registro = registroService.findById(id);
@@ -76,6 +77,7 @@ public class RegistroController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Registro> createRegistro(@RequestBody Registro registro) {
         Registro savedRegistro = registroService.save(registro);
@@ -92,6 +94,7 @@ public class RegistroController {
                 )
         }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRegistro(@PathVariable Long id) {
         registroService.deleteById(id);
@@ -109,13 +112,14 @@ public class RegistroController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/input-registers")
     public ResponseEntity<Void> inputRegisters(@RequestBody List<RegisterInputDTO> registers){
         registroService.inputRegisters(registers);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/input-registers-upload-file")
     public ResponseEntity<Void> inputRegistersByUpload(@RequestParam("file") MultipartFile file){
         registroService.inputRegistersByUploadFile(file);
@@ -136,6 +140,7 @@ public class RegistroController {
                 )
         }
     )
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
     @GetMapping("/filtros/{startDate}/{endDate}/{idUsuario}/{actualPage}")
     public ResponseEntity<RegistersResponseDTO> findLocalByFilters(
                                                                     @PathVariable String startDate,

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,16 +24,19 @@ public class UserSysController {
     
     private final UserSysServiceImpl userSysServiceImpl;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserSys>> getAll(){
         return ResponseEntity.ok().body(userSysServiceImpl.getAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<UserSys> create(@RequestBody UserSysCreate user){
         return ResponseEntity.status(HttpStatus.CREATED).body(userSysServiceImpl.create(user.toUserSys(user)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/username")
     public ResponseEntity<UserSys> getByUsername(@RequestParam String username){
         return ResponseEntity.ok().body(userSysServiceImpl.findByUsername(username));
