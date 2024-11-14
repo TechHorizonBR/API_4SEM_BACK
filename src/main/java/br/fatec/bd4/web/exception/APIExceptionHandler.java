@@ -36,4 +36,26 @@ public class APIExceptionHandler {
 
     }
 
+    @ExceptionHandler(UserAldearyExist.class)
+    public ResponseEntity<ErrorMessage> illegalArgumentException(UserAldearyExist ex,
+                                                              HttpServletRequest request){
+        log.error("Api Error - ", ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+
+    }
+
+    @ExceptionHandler(InvalidPasswords.class)
+    public ResponseEntity<ErrorMessage> illegalArgumentException(InvalidPasswords ex,
+                                                              HttpServletRequest request){
+        log.error("Api Error - ", ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+
+    }
+
 }

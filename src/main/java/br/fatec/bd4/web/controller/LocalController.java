@@ -116,5 +116,4 @@ public class LocalController {
         localService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
 }
