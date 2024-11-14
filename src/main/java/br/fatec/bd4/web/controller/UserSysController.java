@@ -18,35 +18,84 @@ import br.fatec.bd4.web.dto.UserSysCreate;
 import br.fatec.bd4.web.dto.UserSysResetPasswordDTO;
 import br.fatec.bd4.web.dto.UserSysResponseDTO;
 import br.fatec.bd4.web.dto.UserSysUpdateDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/usersys")
 @RequiredArgsConstructor
-@Tag(name = "System User", description = "Responsible for managering systems users")
+@Tag(name = "System User", description = "Responsible for managing systems users")
 public class UserSysController {
     
     private final UserSysServiceImpl userSysServiceImpl;
 
+     @Operation(
+        summary = "Get all System Users.",
+        description = "Endpoint responsible for getting a list of all system users. Just ADMIN has access to this endpoint.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Getting has been executed successfully.",
+                    content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = UserSysResponseDTO.class)))) 
+            }
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserSysResponseDTO>> getAll(){
         return ResponseEntity.ok().body(UserSysResponseDTO.toListUserSysResponseDTO(userSysServiceImpl.getAll()));
     }
 
+    @Operation(
+        summary = "Create a new System User.",
+        description = "Endpoint responsible for creating a new system user. Just ADMIN has access to this endpoint.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "User has been created successfully.",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserSysResponseDTO.class))) 
+            }
+    )
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<UserSysResponseDTO> create(@RequestBody UserSysCreate user){
         return ResponseEntity.status(HttpStatus.CREATED).body(UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.create(user.toUserSys(user))));
     }
 
+    @Operation(
+        summary = "Get System User by username.",
+        description = "Endpoint responsible for getting an user by username. Just ADMIN has access to this endpoint.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "User has been created successfully.",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserSysResponseDTO.class))) 
+            }
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/username")
     public ResponseEntity<UserSysResponseDTO> getByUsername(@RequestParam String username){
         return ResponseEntity.ok().body(UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.findByUsername(username)));
     }
 
+    @Operation(
+        summary = "Update System User.",
+        description = "Endpoint responsible for updating a system user. Just ADMIN has access to this endpoint.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User has been updated successfully.",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserSysResponseDTO.class))) 
+            }
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/update-user")
     public ResponseEntity<UserSysResponseDTO> updateUser(@RequestParam Long id, UserSysUpdateDTO userSysUpdateDTO){
@@ -55,6 +104,17 @@ public class UserSysController {
         ));
     }
 
+    @Operation(
+        summary = "Reset password.",
+        description = "Endpoint responsible for reseting password. ADMIN and CLIENTE have access to this endpoint.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Password has been reseted successfully.",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserSysResponseDTO.class))) 
+            }
+    )
     @PatchMapping("/reset-senha")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('CLIENTE') and #id == authentication.principal.id)")
     public ResponseEntity<UserSysResponseDTO> resetSenha(@RequestParam Long id, @RequestBody UserSysResetPasswordDTO user){
