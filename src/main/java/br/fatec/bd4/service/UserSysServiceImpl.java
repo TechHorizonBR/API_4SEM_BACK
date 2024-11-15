@@ -15,6 +15,7 @@ import br.fatec.bd4.entity.Enum.Role;
 import br.fatec.bd4.repository.UserSysRepository;
 import br.fatec.bd4.service.interfaces.UserSysService;
 import br.fatec.bd4.web.dto.UserSysResetPasswordDTO;
+import br.fatec.bd4.web.exception.EntityNotFoundException;
 import br.fatec.bd4.web.exception.InvalidPasswords;
 import br.fatec.bd4.web.exception.UserAldearyExist;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class UserSysServiceImpl implements UserSysService{
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userSysRepository.save(user);
         } catch (org.springframework.dao.DataIntegrityViolationException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username já cadastrado");
+            throw new UserAldearyExist("Username já cadastrado");
         }
     }
 
@@ -53,7 +54,7 @@ public class UserSysServiceImpl implements UserSysService{
         Optional<UserSys> userFound = userSysRepository.findById(id);
 
         if(userFound.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User doesn't exist");
+            throw new EntityNotFoundException("Usuário não existe.");
         
         return userFound.get();
     }
@@ -104,7 +105,7 @@ public class UserSysServiceImpl implements UserSysService{
         Optional<UserSys> user = userSysRepository.findByUsername(username);
 
         if(user.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User doesn't exist");
+            throw new EntityNotFoundException("Usuário não existe.");
 
         return user.get();
     }
