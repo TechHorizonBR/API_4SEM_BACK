@@ -12,10 +12,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import br.fatec.bd4.jwt.JwtAuthenticationEntryPoint;
 import br.fatec.bd4.jwt.JwtAuthorizationFilter;
+
+import java.util.List;
 
 @EnableMethodSecurity
 @EnableWebMvc
@@ -29,10 +33,10 @@ public class SpringSecurityConfig {
         "/**.html", "/webjars/**", "/configuration/**", "/swagger-resources/**"
     };
 
-    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configuração de CORS
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
@@ -41,14 +45,31 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usersys/create").permitAll()
                         .requestMatchers(DOCUMENTATION_OPENAPI).permitAll()
                         .anyRequest().authenticated()
-                ).sessionManagement(
+                )
+                .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).addFilterBefore(
+                )
+                .addFilterBefore(
                         jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
-                ).exceptionHandling(
-                    ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                )
+                .exceptionHandling(
+                        ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 )
                 .build();
+    }
+
+
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173")); // Origem permitida
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
+        config.setAllowedHeaders(List.of("*")); // Cabeçalhos permitidos
+        config.setAllowCredentials(true); // Permitir cookies (se necessário)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config); // Aplicar para todos os endpoints
+        return source;
     }
 
     @Bean

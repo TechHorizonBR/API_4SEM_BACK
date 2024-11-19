@@ -5,10 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.fatec.bd4.jwt.JwtToken;
@@ -29,6 +26,7 @@ import br.fatec.bd4.web.exception.ErrorMessage;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "Autenticação", description = "Recurso para proceder com a autenticação na API.")
+@CrossOrigin("*")
 public class AutenticacaoController {
     private final JwtUserDetailsService detailsService;
     private final AuthenticationManager authenticationManager;
