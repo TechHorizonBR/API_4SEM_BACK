@@ -79,7 +79,7 @@ public class UserSysController {
                     schema = @Schema(implementation = UserSysResponseDTO.class))) 
             }
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
     @GetMapping("/username")
     public ResponseEntity<UserSysResponseDTO> getByUsername(@RequestParam String username){
         return ResponseEntity.ok().body(UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.findByUsername(username)));
