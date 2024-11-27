@@ -18,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import br.fatec.bd4.jwt.JwtAuthenticationEntryPoint;
 import br.fatec.bd4.jwt.JwtAuthorizationFilter;
+import io.netty.handler.codec.http.HttpMessage;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usersys/create").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/filters").permitAll()
                         .requestMatchers(DOCUMENTATION_OPENAPI).permitAll()
                         .anyRequest().authenticated()
                 )
