@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +84,14 @@ public class UserSysServiceImpl implements UserSysService{
         }
         userFound.setPassword(passwordEncoder.encode(userSys.passwordConfirmation()));
         return userSysRepository.save(userFound);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void deleteByUsername(String username) {
+        UserSys user = userSysRepository.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found."));
+        userSysRepository.deleteById(user.getId());
     }
 
     @Override

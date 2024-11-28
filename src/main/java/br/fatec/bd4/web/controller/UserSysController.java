@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,6 +87,23 @@ public class UserSysController {
         return ResponseEntity.ok().body(UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.findByUsername(username)));
     }
 
+    @Operation(
+        summary = "Delete System user.",
+        description = "Endpoint responsible for deleting a User. Just Admin has access to this endpoint.",
+        responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User has been deleted.",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserSysResponseDTO.class))) 
+            }
+    )
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @DeleteMapping("/delete/{username}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+        userSysServiceImpl.deleteByUsername(username);
+        return ResponseEntity.noContent().build();
+}
     @Operation(
         summary = "Update System User.",
         description = "Endpoint responsible for updating a system user. Just ADMIN has access to this endpoint.",
