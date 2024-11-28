@@ -18,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import br.fatec.bd4.jwt.JwtAuthenticationEntryPoint;
 import br.fatec.bd4.jwt.JwtAuthorizationFilter;
+import io.netty.handler.codec.http.HttpMessage;
 
 import java.util.List;
 

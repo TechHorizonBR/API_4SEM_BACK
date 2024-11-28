@@ -87,7 +87,6 @@ public class UserSysController {
         return ResponseEntity.ok().body(UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.findByUsername(username)));
     }
 
-
     @Operation(
         summary = "Delete System user.",
         description = "Endpoint responsible for deleting a User. Just Admin has access to this endpoint.",
@@ -105,7 +104,6 @@ public class UserSysController {
         userSysServiceImpl.deleteByUsername(username);
         return ResponseEntity.noContent().build();
 }
-
     @Operation(
         summary = "Update System User.",
         description = "Endpoint responsible for updating a system user. Just ADMIN has access to this endpoint.",
