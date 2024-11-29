@@ -53,6 +53,8 @@ public class UserSysServiceImpl implements UserSysService{
     @Override
     @Transactional(readOnly = true)
     public UserSys getById(Long id) {
+        if(id == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "USUÁRIO NÃO PODE SER NULO");
         Optional<UserSys> userFound = userSysRepository.findById(id);
 
         if(userFound.isEmpty())
@@ -97,7 +99,7 @@ public class UserSysServiceImpl implements UserSysService{
     @Override
     @Transactional(readOnly = false)
     public UserSys update(UserSys user) {
-
+        System.out.println(user.getId());
         UserSys userFound = getById(user.getId());
         userFound.setName(user.getName());
         userFound.setRole(user.getRole());

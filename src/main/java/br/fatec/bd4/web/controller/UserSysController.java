@@ -117,7 +117,7 @@ public class UserSysController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/update-user")
-    public ResponseEntity<UserSysResponseDTO> updateUser(@RequestParam Long id, UserSysUpdateDTO userSysUpdateDTO){
+    public ResponseEntity<UserSysResponseDTO> updateUser(@RequestBody UserSysUpdateDTO userSysUpdateDTO){
         return ResponseEntity.ok().body(
             UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.update(UserSysResponseDTO.toUserSys(userSysUpdateDTO)) 
         ));
