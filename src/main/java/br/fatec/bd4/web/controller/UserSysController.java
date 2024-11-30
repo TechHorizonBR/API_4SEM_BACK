@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,11 +29,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import lombok.RequiredArgsConstructor;
+import oracle.jdbc.proxy.annotation.Post;
 
 @RestController
 @RequestMapping("/usersys")
 @RequiredArgsConstructor
 @Tag(name = "System User", description = "Responsible for managing systems users")
+@CrossOrigin("*")
 public class UserSysController {
     
     private final UserSysServiceImpl userSysServiceImpl;
@@ -116,7 +120,7 @@ public class UserSysController {
             }
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/update-user")
+    @PutMapping("/update-user")
     public ResponseEntity<UserSysResponseDTO> updateUser(@RequestBody UserSysUpdateDTO userSysUpdateDTO){
         return ResponseEntity.ok().body(
             UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.update(UserSysResponseDTO.toUserSys(userSysUpdateDTO)) 
