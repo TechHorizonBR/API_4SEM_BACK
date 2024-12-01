@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -138,12 +140,13 @@ public class UserSysController {
                     schema = @Schema(implementation = UserSysResponseDTO.class))) 
             }
     )
-    @PatchMapping("/reset-senha")
+    @PutMapping("/reset-senha/{id}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('CLIENTE') and #id == authentication.principal.id)")
-    public ResponseEntity<UserSysResponseDTO> resetSenha(@RequestParam Long id, @RequestBody UserSysResetPasswordDTO user){
+    public ResponseEntity<UserSysResponseDTO> resetSenha(@PathVariable Long id, @RequestBody UserSysResetPasswordDTO user) {
         return ResponseEntity.ok().body(
-            UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.resetPassword(user)
-        ));
+            UserSysResponseDTO.toUserResponseDTO(userSysServiceImpl.resetPassword(user))
+        );
     }
+
 
 }
