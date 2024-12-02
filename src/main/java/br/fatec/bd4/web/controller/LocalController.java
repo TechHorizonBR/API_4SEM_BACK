@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,6 @@ public class LocalController {
     @Autowired
     private LocalService localService;
 
-    // Retorna todos os locais
     @Operation(
         summary = "Get all Locals.",
         description = "Endpoint responsible for retrieving a list of all locals.",
@@ -35,16 +35,16 @@ public class LocalController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Local>> getAllLocais() {
         List<Local> locais = localService.findAll();
         return ResponseEntity.ok(locais);
     }
 
-    // Retorna um local específico pelo ID
     @Operation(
         summary = "Get all Locals .",
-        description = "Endpoint responsible for getting local information searhing for id.",
+        description = "Endpoint responsible for getting local information searching for id.",
         responses = {
             @ApiResponse(
                     responseCode = "200",
@@ -54,6 +54,7 @@ public class LocalController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Local> getLocalById(@PathVariable Long id) {
         Optional<Local> local = localService.findById(id);
@@ -61,7 +62,6 @@ public class LocalController {
                     .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Cria um novo local
     @Operation(
         summary = "Create a new Local.",
         description = "Endpoint responsible for creating a new local",
@@ -74,13 +74,13 @@ public class LocalController {
                 )
         }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Local> createLocal(@RequestBody Local local) {
         Local savedLocal = localService.save(local);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLocal);
     }
 
-    // Atualiza um local existente
     @Operation(
         summary = "Update an existing Local.",
         description = "Endpoint responsible for updating an existing local by its ID.",
@@ -93,13 +93,13 @@ public class LocalController {
             )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Local> updateLocal(@PathVariable Long id, @RequestBody Local localDetails) {
         Local updatedLocal = localService.update(id, localDetails);
         return ResponseEntity.ok(updatedLocal);
     }
 
-    // Exclui um local pelo ID
     @Operation(
         summary = "Delete a Local.",
         description = "Endpoint responsible for deleting a Local by its ID.",
@@ -110,10 +110,10 @@ public class LocalController {
                 )
         }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocal(@PathVariable Long id) {
         localService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,6 @@ public class DeviceController {
     @Autowired
     private DeviceService deviceService;
 
-    // Retorna todos os dispositivos
     @Operation(
         summary = "Get all Devices.",
         description = "Endpoint responsible for retrieving a list of all devices.",
@@ -33,14 +33,14 @@ public class DeviceController {
                         implementation = Device.class))
                     )
             }
-        )        
+        )
+    @PreAuthorize("hasRole('ADMIN')")        
     @GetMapping
     public ResponseEntity<List<Device>> getAllDevices() {
         List<Device> devices = deviceService.findAll();
         return ResponseEntity.ok(devices);
     }
 
-    // Retorna um dispositivo específico pelo ID
     @Operation(
             summary = "Get the Device.",
             description = "Endpoint responsible for getting device information searching for id.",
@@ -53,6 +53,7 @@ public class DeviceController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Device> getDeviceById(@PathVariable Long id) {
         Optional<Device> device = deviceService.findById(id);
@@ -60,7 +61,6 @@ public class DeviceController {
                      .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Cria um novo dispositivo
     @Operation(
             summary = "Create a new Device.",
             description = "Endpoint responsible for creating a new device, receiving a list of UserDeviceDataDTO to input the data.",
@@ -73,13 +73,13 @@ public class DeviceController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Device> createDevice(@RequestBody Device device) {
         Device savedDevice = deviceService.save(device);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDevice);
     }
 
-    // Atualiza um dispositivo existente
     @Operation(
         summary = "Update an existing Device.",
         description = "Endpoint responsible for updating an existing device by its ID.",
@@ -90,15 +90,15 @@ public class DeviceController {
                     content = @Content(mediaType = "application/json", schema = @Schema(
                         implementation = Device.class))
             )
-            }
-        )
+        }
+    )
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Device> updateDevice(@PathVariable Long id, @RequestBody Device deviceDetails) {
         Device updatedDevice = deviceService.update(id, deviceDetails);
         return ResponseEntity.ok(updatedDevice);
     }
 
-    // Exclui um dispositivo pelo ID
     @Operation(
         summary = "Delete a Device.",
         description = "Endpoint responsible for deleting a device by its ID.",
@@ -109,6 +109,7 @@ public class DeviceController {
                 )
         }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
         deviceService.deleteById(id);
